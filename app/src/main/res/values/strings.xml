@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Project60</string>
+    <string name="open_menu">Openmenu</string>
+    <string name="close_menu">Closemenu</string>
+    <string name="home">หน้าแรก</string>
+    <string name="menu1">แนะนำรายการ</string>
+    <string name="menu2">Shopping List</string>
+    <string name="menu3">กลุ่มผู้ใช้</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add">add</string>
+    <string name="action_find">find</string>
+    <string name="search">SEARCH</string>
+    <string name="menusearch">ค้นหา</string>
+    <string name="adddata">เพิ่มรายการ</string>
+    <string name="username">ชื่อ</string>
+    <string name="amount">จำนวน</string>
+    <string name="exe">วันหมดอายุ</string>
+    <string name="success">เสร็จสิ้น</string>
+    <string name="app_name2">แอพจัดดการของสดในตู้เย็น</string>
+    <string name="menu4">ออกจากระบบ</string>
+    <string name="types">ประเภท</string>
+
+
+    <string name="from_date">From Date</string>
+    <string name="to_date">To Date</string>
+
+    <string-array name="unitarray">
+        <item>กรัม</item>
+        <item>ชิ้น</item>
+        <item>อัน</item>
+        <item>ขวด</item>
+    </string-array>
+
+    <string-array name="typearray">
+        <item>เนื้อ</item>
+        <item>ผักและผลไม้</item>
+        <item>อื่นๆ</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
