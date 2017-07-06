@@ -34,7 +34,7 @@ public class join_group extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_group);
+        setContentView(R.layout.join_group);
 
         sharedPreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedPreferences.getString("user_id", null);
@@ -143,7 +143,7 @@ public class join_group extends AppCompatActivity
         String type = "joingroup";
         BackgroundTask backgroundTask = new BackgroundTask(this);
         backgroundTask.execute(type,groupname,grouppass,user_id);
-        finish();
+
 
 
     }

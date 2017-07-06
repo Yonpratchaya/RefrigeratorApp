@@ -181,33 +181,6 @@ public class add_menu extends AppCompatActivity
         ArrayAdapter<String> adapterSpinner2 = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, Spinner2);
         type.setAdapter(adapterSpinner2);
-        // setOnItemSelectedListener  Spinner
-        unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(add_menu.this,
-                        "Select : " + Spinner1[position],
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(add_menu.this,
-                        "Select : " + Spinner2[position],
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     public void AddMenu(View view) {

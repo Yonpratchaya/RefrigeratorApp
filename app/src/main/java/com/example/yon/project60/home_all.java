@@ -62,7 +62,7 @@ public class home_all extends AppCompatActivity
     private static final String get_vegetable_url = "http://" + host_ip + "/webapp/get_vegetablesandfruits.php";
     private static final String get_other_url = "http://" + host_ip + "/webapp/get_other.php";
 
-    private String user_id, user_name;
+    private String user_id, user_name, group_names;
     private List<Fresh> freshList = new ArrayList<Fresh>();
     private ListView listView;
     private CustomAdapter adapter;
@@ -92,11 +92,13 @@ public class home_all extends AppCompatActivity
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
         user_name = sharedpreferences.getString("user_name", null);
+        group_names = sharedpreferences.getString("group_name", null);
         i = 0;
 
         TextView txtuser_name = (TextView) findViewById(R.id.usernametext2);
         txtuser_name.setText(user_name);
-
+        TextView txtgroup_name = (TextView) findViewById(R.id.groupnametext2);
+        txtgroup_name.setText(group_names);
         //Set the fragment initially
         MainFragment fragment = new MainFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction =

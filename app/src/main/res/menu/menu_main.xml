@@ -5,7 +5,7 @@
     tools:context="com.example.yon.project60.home_all">
     <item
         android:id="@+id/action_find"
-        android:icon="@drawable/find"
+        android:icon="@drawable/findgroup"
         android:title="@string/action_find"
         app:showAsAction="always" />
     <item

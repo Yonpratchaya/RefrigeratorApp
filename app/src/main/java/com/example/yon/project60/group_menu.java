@@ -129,10 +129,10 @@ public class group_menu extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
     private void join(){
-        Create.setOnClickListener(new View.OnClickListener() {
+        Join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(group_menu.this,create_group.class);
+                Intent intent = new Intent(group_menu.this,join_group.class);
                 startActivity(intent);
             }
         });

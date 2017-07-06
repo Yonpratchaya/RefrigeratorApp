@@ -29,6 +29,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     Context ctx;
     AlertDialog alertDialog;
     SharedPreferences sharedpreferences;
+    String group_name;
 
     BackgroundTask(Context ctx) {
         this.ctx = ctx;
@@ -50,6 +51,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         String Add_url = "http://"+host_ip+"/webapp/fresh_list.php";
         String expandcal_url = "http://"+host_ip+"/webapp/query_exp_cal.php";
         String creategroup_url = "http://"+host_ip+"/webapp/create_group.php";
+        String joingroup_url = "http://"+host_ip+"/webapp/join_group.php";
 
         String type = params[0];
 
@@ -242,7 +244,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             String user_id = params[3];
 
             try {
-                URL url = new URL(login_url);
+                URL url = new URL(joingroup_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -264,6 +266,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 while ((line = bufferedReader.readLine()) != null) {
                     result += line;
                 }
+                String[] getgroupname = result.split(":");
+                group_name = getgroupname[1];
+                result = getgroupname[0];
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
@@ -287,13 +292,33 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        if (result.equals("Registration Success...")) {
+        if (result.equals("Registration Success...")) { //---Register
             Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
             return;
-        }else if (result.equals("CreateGroup Success...")) {
+        }else if (result.equals("CreateGroup Success...")) { //---CreateGroup
             Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
         }
-        else if (result.equals("addMenu Success....")) {
+        else if (result.equals("Group Login Success ")){ //---JoinGroup
+            alertDialog.setMessage(result);
+            alertDialog.show();
+
+            Intent intent = new Intent(ctx, home_all.class);
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putString("group_name", group_name);
+            editor.commit();
+            ctx.startActivity(intent);
+            ((Activity) ctx).finish();
+
+        }
+        else if (result.equals("Login again")){//---JoinGroup
+            alertDialog.setMessage(result);
+            alertDialog.show();
+        }
+        else if (result.equals("insert not success")){//---JoinGroup
+            alertDialog.setMessage(result);
+            alertDialog.show();
+        }
+        else if (result.equals("addMenu Success....")) { //---AddMenu
             alertDialog.setMessage(result);
             alertDialog.setTitle("AddMenu Status");
             alertDialog.show();
@@ -302,11 +327,11 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             ctx.startActivity(intent);
             ((Activity) ctx).finish();
         }
-        else if (result.equals("login 0")) {
+        else if (result.equals("login 0")) { //---Login False
             alertDialog.setMessage(result);
             alertDialog.show();
 
-        }else if (result.equals("4 5 24 117 65 142")){
+        }else if (result.equals("4 5 24 117 65 142")){ //---Get CalandExpAvg
             String[] getexpandcal = result.split(" ");
             String expmeat = getexpandcal[0];
             String expvetg = getexpandcal[1];
@@ -323,7 +348,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             editor.putString("calother", calother);
             editor.commit();
         }
-        else {
+        else { //---Login Success
             String[] getid = result.split(" ");
             String id = getid[1];
             String name = getid[2];

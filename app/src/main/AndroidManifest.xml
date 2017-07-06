@@ -38,6 +38,7 @@
         <activity android:name=".shoppinglist_menu"/>
         <activity android:name=".group_menu"/>
         <activity android:name=".create_group"/>
+        <activity android:name=".join_group"/>
     </application>
 
 </manifest>
