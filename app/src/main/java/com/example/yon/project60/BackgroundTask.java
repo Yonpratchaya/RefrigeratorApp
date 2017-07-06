@@ -44,11 +44,12 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String host_ip = "192.168.137.1";
+        String host_ip = "10.105.10.116";
         String reg_url = "http://"+host_ip+"/webapp/register.php";
         String login_url = "http://"+host_ip+"/webapp/login.php";
         String Add_url = "http://"+host_ip+"/webapp/fresh_list.php";
         String expandcal_url = "http://"+host_ip+"/webapp/query_exp_cal.php";
+        String creategroup_url = "http://"+host_ip+"/webapp/create_group.php";
 
         String type = params[0];
 
@@ -205,6 +206,75 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             }
 
         }
+        //---------------------------------------CreateGroup-----------------------------------------------
+        else if (type.equals("creategroup")) {
+            String groupname = params[1];
+            String grouppass = params[2];
+            String user_name = params[3];
+            try {
+                URL url = new URL(creategroup_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                OutputStream OS = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(OS, "UTF-8"));
+                String data = URLEncoder.encode("groupname", "UTF-8") + "=" + URLEncoder.encode(groupname, "UTF-8") + "&" +
+                        URLEncoder.encode("grouppass", "UTF-8") + "=" + URLEncoder.encode(grouppass, "UTF-8") + "&" +
+                        URLEncoder.encode("user_name", "UTF-8") + "=" + URLEncoder.encode(user_name, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                OS.close();
+                InputStream IS = httpURLConnection.getInputStream();
+                IS.close();
+                return "CreateGroup Success...";
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        //----------------------------------------------------JoinGroup--------------------------------------------------------
+        else if (type.equals("joingroup")) {
+            String groupname = params[1];
+            String grouppass = params[2];
+            String user_id = params[3];
+
+            try {
+                URL url = new URL(login_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("groupname", "UTF-8") + "=" + URLEncoder.encode(groupname, "UTF-8") + "&" +
+                        URLEncoder.encode("grouppass", "UTF-8") + "=" + URLEncoder.encode(grouppass, "UTF-8") + "&" +
+                        URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         return null;
     }
@@ -220,6 +290,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         if (result.equals("Registration Success...")) {
             Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
             return;
+        }else if (result.equals("CreateGroup Success...")) {
+            Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
         }
         else if (result.equals("addMenu Success....")) {
             alertDialog.setMessage(result);
@@ -254,13 +326,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         else {
             String[] getid = result.split(" ");
             String id = getid[1];
+            String name = getid[2];
 
-            alertDialog.setMessage(result);
+            alertDialog.setMessage(getid[0]+getid[1]);
             alertDialog.show();
 
             Intent intent = new Intent(ctx, home_all.class);
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("user_id", id);
+            editor.putString("user_name", name);
             editor.commit();
             ctx.startActivity(intent);
             ((Activity) ctx).finish();

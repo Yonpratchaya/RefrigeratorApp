@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
@@ -55,13 +56,13 @@ public class home_all extends AppCompatActivity
     private ImageButton buttonmeat;
     private ImageButton buttonvegetable;
     private ImageButton buttonother;
-    private static final String host_ip = "192.168.137.1";
+    private static final String host_ip = "10.105.10.116";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_meat_url = "http://" + host_ip + "/webapp/get_meat.php";
     private static final String get_vegetable_url = "http://" + host_ip + "/webapp/get_vegetablesandfruits.php";
     private static final String get_other_url = "http://" + host_ip + "/webapp/get_other.php";
 
-    private String user_id;
+    private String user_id, user_name;
     private List<Fresh> freshList = new ArrayList<Fresh>();
     private ListView listView;
     private CustomAdapter adapter;
@@ -90,7 +91,11 @@ public class home_all extends AppCompatActivity
             user_id = bundle.getString("user_id");/// รับค่า MyValue จาก BackgroundTask มา}*/
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
+        user_name = sharedpreferences.getString("user_name", null);
         i = 0;
+
+        TextView txtuser_name = (TextView) findViewById(R.id.usernametext2);
+        txtuser_name.setText(user_name);
 
         //Set the fragment initially
         MainFragment fragment = new MainFragment();

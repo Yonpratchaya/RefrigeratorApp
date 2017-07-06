@@ -1,6 +1,8 @@
 package com.example.yon.project60;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,15 +13,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.TextView;
 
 /**
- * Created by Yon on 26/5/2560.
+ * Created by Yon on 6/7/2560.
  */
 
-public class group_menu extends AppCompatActivity
+public class create_group extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-    ImageView Join, Create, Leave;
+    EditText ET_GNAME,ET_GPASS;
+    String groupname,grouppass;
+
+    SharedPreferences sharedPreferences;
+    String user_name;
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -28,11 +35,14 @@ public class group_menu extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.group_menu);
+        setContentView(R.layout.create_group);
+
+        sharedPreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+        user_name = sharedPreferences.getString("user_name", null);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
-                group_menu.this,
+                create_group.this,
                 drawerLayout,
                 R.string.open_menu,
                 R.string.close_menu
@@ -47,13 +57,11 @@ public class group_menu extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Join = (ImageView) findViewById(R.id.JoinGroup);
-        Create = (ImageView) findViewById(R.id.CreateGroup);
-        Leave = (ImageView) findViewById(R.id.LeaveGroup);
+        ET_GNAME = (EditText) findViewById(R.id.groupname_reg);
+        ET_GPASS = (EditText) findViewById(R.id.pass_reg);
 
-        join();
-        create();
-        leave();
+
+
 
     }
 
@@ -64,27 +72,27 @@ public class group_menu extends AppCompatActivity
 
         switch (id) {
             case R.id.home:
-                Intent intent3 = new Intent(group_menu.this, home_all.class);
+                Intent intent3 = new Intent(create_group.this, home_all.class);
                 startActivity(intent3);
                 finish();
                 return true;
             case R.id.suggest:
-                Intent intent4 = new Intent(group_menu.this, suggestlist_menu.class);
+                Intent intent4 = new Intent(create_group.this, suggestlist_menu.class);
                 startActivity(intent4);
                 finish();
                 return true;
             case R.id.shopping:
-                Intent intent5 = new Intent(group_menu.this, shoppinglist_menu.class);
+                Intent intent5 = new Intent(create_group.this, shoppinglist_menu.class);
                 startActivity(intent5);
                 finish();
                 return true;
             case R.id.group:
-                Intent intent6 = new Intent(group_menu.this, group_menu.class);
+                Intent intent6 = new Intent(create_group.this, group_menu.class);
                 startActivity(intent6);
                 finish();
                 return true;
             case R.id.exit:
-                Intent intent7 = new Intent(group_menu.this, MainActivity.class);
+                Intent intent7 = new Intent(create_group.this, MainActivity.class);
                 startActivity(intent7);
                 finish();
                 return true;
@@ -128,23 +136,16 @@ public class group_menu extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    private void join(){
-        Create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(group_menu.this,create_group.class);
-                startActivity(intent);
-            }
-        });
+
+    public void Creategroup(View view){
+
+        groupname = ET_GNAME.getText().toString();
+        grouppass = ET_GPASS.getText().toString();
+        String type = "creategroup";
+        BackgroundTask backgroundTask = new BackgroundTask(this);
+        backgroundTask.execute(type,groupname,grouppass,user_name);
+        finish();
+
+
     }
-    private void create(){
-        Create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(group_menu.this,create_group.class);
-                startActivity(intent);
-            }
-        });
-    }
-    private void leave(){}
 }

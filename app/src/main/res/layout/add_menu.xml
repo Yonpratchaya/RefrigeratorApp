@@ -74,7 +74,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:ems="8"
-                        android:hint="ชื่อสินค้า" />
+                        android:hint="ชื่อสินค้า"
+                        android:maxLines="1"
+                        android:inputType="textAutoComplete"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -97,6 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="0"
+                        android:maxLines="1"
                         android:ems="4"
                         android:hint="1,2,3..." />
 
