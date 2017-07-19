@@ -91,7 +91,7 @@
                 android:layout_below="@+id/createlayout"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="10dp"
-                android:onClick="Creategroup"
+                android:onClick="Joingroup"
                 android:text="GLOGIN" />
 
 

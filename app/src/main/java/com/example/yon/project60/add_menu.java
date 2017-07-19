@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -31,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.os.Environment;
@@ -41,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.DatePickerDialog;
@@ -48,7 +51,20 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.text.InputType;
 import android.widget.DatePicker;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.joda.time.LocalDate;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.example.yon.project60.R.id.autocompleteadd;
 
 
 /**
@@ -64,6 +80,7 @@ public class add_menu extends AppCompatActivity
     Spinner UNIT, TYPENAME;
     LocalDate dateNow;
     int avgdays;
+    private String join_leave_id, group_id, group_name;
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -72,7 +89,7 @@ public class add_menu extends AppCompatActivity
     private Spinner unit;
     private Spinner type;
     //radiobutton
-    TextView selectdb, avgexp;
+    TextView selectdb, avgexp, txtadd;
 
     //UI References
     private EditText DateEtxt;
@@ -83,6 +100,14 @@ public class add_menu extends AppCompatActivity
     private ImageView imageView;
     String ba1;
     String mCurrentPhotoPath;
+    ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    private static final String host_ip = "10.105.24.132";
+    private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
+
+    // Autocomplete
+    private AutoCompleteTextView Autocomplete;
+    String aaa = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +117,9 @@ public class add_menu extends AppCompatActivity
 
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
+        join_leave_id = sharedpreferences.getString("join_leave_id", null);
+        group_id = sharedpreferences.getString("group_id", null);
+        group_name = sharedpreferences.getString("group_name",null);
         ExpAvgMeat = sharedpreferences.getString("expmeat", null);
         ExpAvgVetg = sharedpreferences.getString("expvetg", null);
         ExpAvgOther = sharedpreferences.getString("expother", null);
@@ -99,6 +127,12 @@ public class add_menu extends AppCompatActivity
         CalAvgVetg = sharedpreferences.getString("calvetg", null);
         CalAvgOther = sharedpreferences.getString("calother", null);
 
+        txtadd = (TextView) findViewById(R.id.text1);
+        if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
+            txtadd.setText("เพิ่มรายการ ตู้เย็นของฉัน");
+        }else{
+            txtadd.setText("เพิ่มรายการ ตู้เย็นของ "+ group_name);
+        }
         //Spinner
         spinner();
 
@@ -131,7 +165,7 @@ public class add_menu extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        ET_FRESH_NAME = (EditText) findViewById(R.id.editText);
+        Autocomplete = (AutoCompleteTextView) findViewById(autocompleteadd);
         ET_AMOUNT = (EditText) findViewById(R.id.editText2);
         ET_EXP = (EditText) findViewById(R.id.editTextdate);
         UNIT = (Spinner) findViewById(R.id.spinner1);
@@ -166,6 +200,60 @@ public class add_menu extends AppCompatActivity
         });
 
 
+        ///------------------------------Autoconplete-----------------------------
+        Autocomplete = (AutoCompleteTextView) findViewById(autocompleteadd);
+        final List<String> list = new ArrayList<String>();
+
+
+        Autocomplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
+                RequestQueue queue = Volley.newRequestQueue(add_menu.this);
+                final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_baseAdd + "?user_id=" + user_id, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
+                        try {
+                            JSONArray productArray = response.getJSONArray("result");
+                            for (int i = 0; i < productArray.length(); i++) {
+                                JSONObject jo = productArray.getJSONObject(i);
+                                String a = jo.getString("fresh_name");
+
+                                list.add(a);
+
+
+
+                            }
+                            ///------------------------------Autoconplete-----------------------------
+                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(add_menu.this, android.R.layout.simple_dropdown_item_1line, list);
+                            AutoCompleteTextView autocomplete = (AutoCompleteTextView) add_menu.this.findViewById(autocompleteadd);
+                            autocomplete.setAdapter(dataAdapter);
+
+                           //  aaa = Autocomplete.getText().toString();
+                            Toast.makeText(add_menu.this,aaa,Toast.LENGTH_LONG).show();
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        NetworkResponse networkResponse = error.networkResponse;
+                        if (networkResponse != null && networkResponse.data != null) {
+                            String jsonError = new String(networkResponse.data);
+                            // Print Error!
+                        }
+                        Toast.makeText(add_menu.this, error.toString(), Toast.LENGTH_LONG).show();
+                    }
+
+                });
+                queue.add(jsonObjectRequest);
+            }
+        });
     }
 
     public void spinner() {
@@ -184,53 +272,14 @@ public class add_menu extends AppCompatActivity
     }
 
     public void AddMenu(View view) {
-        //----------------CameraUpload-------------------------------
-        if (mCurrentPhotoPath != null) {
-            // Get the dimensions of the bitmap
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            bmOptions.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-            int photoW = bmOptions.outWidth;
-            int photoH = bmOptions.outHeight;
-
-            // Determine how much to scale down the image
-            int scaleFactor = Math.min(photoW / 100, photoH / 100);
-
-            // Decode the image file into a Bitmap sized to fill the View
-            bmOptions.inJustDecodeBounds = false;
-            bmOptions.inSampleSize = scaleFactor;
-            bmOptions.inPurgeable = true;
-
-            Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
-            int h = bm.getHeight();
-            int w = bm.getWidth();
-            int scaled_w = 100 * w / h;
-            bm = Bitmap.createScaledBitmap(bm, scaled_w, 100, false);
-
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 100, bao);
-            byte[] ba = bao.toByteArray();
-            ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
-        } else
-            ba1 = "";
-
-        Fresh_Name = ET_FRESH_NAME.getText().toString();
-        Amount = ET_AMOUNT.getText().toString();
-        Exp = ET_EXP.getText().toString();
-        S_Unit = UNIT.getSelectedItem().toString();
-        S_Type_name = TYPENAME.getSelectedItem().toString();
-
-        if (expcheck.equals("1")) {
-
-        } else {
-            Exp = b;
+        if(group_name.equals("ตู้เย็นของฉัน")){
+            join_leave_id = "0";
+            group_id = "0";
+            addedmenu();
         }
-
-        String type = "addMenu";
-        BackgroundTask backgroundTask = new BackgroundTask(this);
-        backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie);
-
+        else {
+            addedmenu();
+        }
     }
 
     @Override
@@ -326,6 +375,12 @@ public class add_menu extends AppCompatActivity
         // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
 
+      /*  String aaa = Autocomplete.getText().toString();
+        String bbb = ET_AMOUNT.getText().toString();
+        String ccc = ET_EXP.getText().toString();
+        Toast.makeText(add_menu.this, aaa + bbb + ccc, Toast.LENGTH_LONG).show();
+         if (aaa == autocompleteadd) {*/
+
         // Check which radio button was clicked
         switch (view.getId()) {
             case R.id.radioButton1:
@@ -367,7 +422,8 @@ public class add_menu extends AppCompatActivity
 
         }
     }
-//----------------เลือกวันหมดอายุเฉลี่ยและแคลลอรี่เฉลี่ย-----------------------------
+
+    //----------------เลือกวันหมดอายุเฉลี่ยและแคลลอรี่เฉลี่ย-----------------------------
     public void ExpFromDatabase() {
         dateNow = LocalDate.now();
         type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -378,7 +434,7 @@ public class add_menu extends AppCompatActivity
                     avgdays = Integer.parseInt(ExpAvgMeat);
                     LocalDate datethen = dateNow.plusDays(avgdays);
                     b = datethen.toString("yyyy-MM-dd");
-                    Calorie     = CalAvgMeat;
+                    Calorie = CalAvgMeat;
                 } else if (typecheck.equals("ผักและผลไม้")) {
                     avgdays = Integer.parseInt(ExpAvgVetg);
                     LocalDate datethen = dateNow.plusDays(avgdays);
@@ -392,8 +448,8 @@ public class add_menu extends AppCompatActivity
                 }
 
                 RadioButton b2 = (RadioButton) findViewById(R.id.radioButton2);
-                if(b2.isChecked()){
-                    selectdb.setText("เลือกวันหมดอายุจากฐานข้อมูล");
+                if (b2.isChecked()) {
+                    selectdb.setText("ค่าเฉลี่ยวันหมดอายุจากฐานข้อมูล");
                     avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
                 }
 
@@ -450,6 +506,55 @@ public class add_menu extends AppCompatActivity
         mCurrentPhotoPath = image.getAbsolutePath();
         Log.e("Getpath", "Cool" + mCurrentPhotoPath);
         return image;
+    }
+
+    public void addedmenu(){
+        //----------------CameraUpload-------------------------------
+        if (mCurrentPhotoPath != null) {
+            // Get the dimensions of the bitmap
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+
+            // Determine how much to scale down the image
+            int scaleFactor = Math.min(photoW / 100, photoH / 100);
+
+            // Decode the image file into a Bitmap sized to fill the View
+            bmOptions.inJustDecodeBounds = false;
+            bmOptions.inSampleSize = scaleFactor;
+            bmOptions.inPurgeable = true;
+
+            Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+
+            int h = bm.getHeight();
+            int w = bm.getWidth();
+            int scaled_w = 100 * w / h;
+            bm = Bitmap.createScaledBitmap(bm, scaled_w, 100, false);
+
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, bao);
+            byte[] ba = bao.toByteArray();
+            ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
+        } else
+            ba1 = "";
+
+        Fresh_Name = Autocomplete.getText().toString();
+        Amount = ET_AMOUNT.getText().toString();
+        Exp = ET_EXP.getText().toString();
+        S_Unit = UNIT.getSelectedItem().toString();
+        S_Type_name = TYPENAME.getSelectedItem().toString();
+
+        if (expcheck.equals("1")) {
+
+        } else {
+            Exp = b;
+        }
+
+        String type = "addMenu";
+        BackgroundTask backgroundTask = new BackgroundTask(this);
+        backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id);
     }
 
 }

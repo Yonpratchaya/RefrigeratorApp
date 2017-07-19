@@ -1,5 +1,6 @@
 package com.example.yon.project60;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +26,7 @@ public class create_group extends AppCompatActivity
     EditText ET_GNAME,ET_GPASS;
     String groupname,grouppass;
 
+    AlertDialog alertDialog;
     SharedPreferences sharedPreferences;
     String user_name;
 
@@ -36,6 +38,8 @@ public class create_group extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_group);
+
+        alertDialog = new AlertDialog.Builder(this).create();
 
         sharedPreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_name = sharedPreferences.getString("user_name", null);
@@ -141,10 +145,17 @@ public class create_group extends AppCompatActivity
 
         groupname = ET_GNAME.getText().toString();
         grouppass = ET_GPASS.getText().toString();
-        String type = "creategroup";
-        BackgroundTask backgroundTask = new BackgroundTask(this);
-        backgroundTask.execute(type,groupname,grouppass,user_name);
-        finish();
+        if(groupname.equals("")||grouppass.equals("")){
+            alertDialog.setMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
+            alertDialog.show();
+        }
+        else{
+            String type = "creategroup";
+            BackgroundTask backgroundTask = new BackgroundTask(this);
+            backgroundTask.execute(type,groupname,grouppass,user_name);
+            finish();
+        }
+
 
 
     }

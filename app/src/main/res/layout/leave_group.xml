@@ -1,0 +1,171 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.yon.project60.MainActivity">
+
+    <!-- The main content view -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/createlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textgroupform"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="LeaveGroup"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/Group1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp">
+
+                    <ImageView
+                        android:id="@+id/icon1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/groupbutton32" />
+
+                    <TextView
+                        android:id="@+id/txtgroup1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text="@string/group"
+                        android:textColor="#000000" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2">
+                        <ImageButton
+                            android:id="@+id/iconleavegroup1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/logout32"
+                            android:background="@drawable/selector_button4"
+                            android:contentDescription="ออกจากกลุ่ม"/>
+                    </LinearLayout>
+
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Group2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <ImageView
+                        android:id="@+id/icon2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/groupbutton32" />
+
+                    <TextView
+                        android:id="@+id/txtgroup2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text="@string/group"
+                        android:textColor="#000000" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2">
+                        <ImageButton
+                            android:id="@+id/iconleavegroup2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/logout32"
+                            android:background="@drawable/selector_button4"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Group3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <ImageView
+                        android:id="@+id/icon3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/groupbutton32" />
+
+                    <TextView
+                        android:id="@+id/txtgroup3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text="@string/group"
+                        android:textColor="#000000" />
+
+                    <ImageButton
+                        android:id="@+id/iconleavegroup3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="50dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/selector_button4"
+                        android:src="@drawable/logout32" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+    </FrameLayout>
+
+
+    <!-- The navigation drawer -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#ffffff"
+        android:orientation="vertical">
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:menu="@menu/navigation_menu">
+
+        </android.support.design.widget.NavigationView>
+
+
+    </LinearLayout>
+</android.support.v4.widget.DrawerLayout>

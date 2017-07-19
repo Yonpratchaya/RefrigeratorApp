@@ -136,7 +136,7 @@ public class join_group extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void Creategroup(View view){
+    public void Joingroup(View view){
 
         groupname = ET_GNAME.getText().toString();
         grouppass = ET_GPASS.getText().toString();

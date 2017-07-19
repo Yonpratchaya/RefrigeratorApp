@@ -1,6 +1,9 @@
 package com.example.yon.project60;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,10 +11,28 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yon on 26/5/2560.
@@ -19,16 +40,27 @@ import android.widget.ImageView;
 
 public class group_menu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
-    ImageView Join, Create, Leave;
+    SharedPreferences sharedpreferences;
+    private static final String host_ip = "10.105.24.132";
+    private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
 
+    ImageView Join, Create, Leave;
+    private String user_id,join_leave_id, group_id, group_name;
+    private String mSelected = "ตู้เย็นของฉัน";
+    private String[] group_names, group_ids, join_leave_ids;
+    private int mSelectedIndex = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_menu);
+
+        sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+        user_id = sharedpreferences.getString("user_id", null);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -54,6 +86,9 @@ public class group_menu extends AppCompatActivity
         join();
         create();
         leave();
+
+        //-----------------------------GetGroup----------------------------------------------------//
+        getgroup();
 
     }
 
@@ -146,5 +181,91 @@ public class group_menu extends AppCompatActivity
             }
         });
     }
-    private void leave(){}
+    private void leave(){
+        Leave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(group_menu.this);
+                builder.setTitle("ออกจากกลุ่ม");
+
+
+                builder.setSingleChoiceItems(group_names, mSelectedIndex, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSelected = group_names[which];
+                        mSelectedIndex = which;
+                    }
+                });
+                builder.setPositiveButton("ยืนยัน", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
+                        Toast.makeText(getApplicationContext(), "ออกจากกลุ่ม " +
+                                mSelected, Toast.LENGTH_SHORT).show();
+
+                            String[] getgroup_name = mSelected.split(" ");
+                            mSelected = getgroup_name[1];
+                            group_id = group_ids[mSelectedIndex];
+                            String type = "leavegroup";
+                            BackgroundTask backgroundTask = new BackgroundTask(group_menu.this);
+                            backgroundTask.execute(type, user_id, group_id);
+
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("ยกเลิก", null);
+                builder.create();
+
+                // สุดท้ายอย่าลืม show() ด้วย
+                builder.show();
+            }
+        });
+    }
+    private void getgroup() {
+        final List<String> group_list = new ArrayList<String>();
+        final List<String> group_list2 = new ArrayList<String>();
+        final List<String> group_list3 = new ArrayList<String>();
+     /*   group_list3.add("0");
+        group_list2.add("0");
+        group_list.add("ตู้เย็นของฉัน");*/
+        //---------------------Getgroup------------------------------------------------------------
+        RequestQueue queue = Volley.newRequestQueue(this);
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_group_url + "?user_id=" + user_id, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
+                try {
+                    JSONArray productArray = response.getJSONArray("result");
+
+                    // properties from the JSONObjects
+                    for (int i = 0; i < productArray.length(); i++) {
+                        JSONObject jo = productArray.getJSONObject(i);
+                        group_list.add("ตู้เย็นของ " + jo.getString("group_name"));
+                        group_list2.add(jo.getString("group_id"));
+                        group_list3.add(jo.getString("join_leave_id"));
+                    }
+                    group_names = group_list.toArray(new String[group_list.size()]);
+                    group_ids = group_list2.toArray(new String[group_list2.size()]);
+                    join_leave_ids = group_list3.toArray(new String[group_list3.size()]);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null && networkResponse.data != null) {
+                    String jsonError = new String(networkResponse.data);
+                    // Print Error!
+                }
+                Toast.makeText(group_menu.this, error.toString(), Toast.LENGTH_LONG).show();
+            }
+
+        });
+        queue.add(jsonObjectRequest);
+    }
 }

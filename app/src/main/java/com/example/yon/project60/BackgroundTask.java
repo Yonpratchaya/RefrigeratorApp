@@ -20,6 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Yon on 1/2/2560.
@@ -29,7 +31,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     Context ctx;
     AlertDialog alertDialog;
     SharedPreferences sharedpreferences;
-    String group_name;
+
 
     BackgroundTask(Context ctx) {
         this.ctx = ctx;
@@ -45,16 +47,16 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String host_ip = "10.105.10.116";
-        String reg_url = "http://"+host_ip+"/webapp/register.php";
-        String login_url = "http://"+host_ip+"/webapp/login.php";
-        String Add_url = "http://"+host_ip+"/webapp/fresh_list.php";
-        String expandcal_url = "http://"+host_ip+"/webapp/query_exp_cal.php";
-        String creategroup_url = "http://"+host_ip+"/webapp/create_group.php";
-        String joingroup_url = "http://"+host_ip+"/webapp/join_group.php";
+        String host_ip = "10.105.24.132";
+        String reg_url = "http://" + host_ip + "/webapp/register.php";
+        String login_url = "http://" + host_ip + "/webapp/login.php";
+        String Add_url = "http://" + host_ip + "/webapp/fresh_list.php";
+        String expandcal_url = "http://" + host_ip + "/webapp/query_exp_cal.php";
+        String creategroup_url = "http://" + host_ip + "/webapp/create_group.php";
+        String joingroup_url = "http://" + host_ip + "/webapp/join_group.php";
+        String leave_group_url = "http://" + host_ip + "/webapp/leave_group.php";
 
         String type = params[0];
-
 
 
         //--------------------------------------- register ---------------------------------------//
@@ -136,6 +138,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             String ba1 = params[6];
             String User_id = params[7];
             String Calorie = params[8];
+            String join_leave_id  = params[9];
+            String group_id = params[10];
 
             String ImageName = System.currentTimeMillis() + ".jpg";
 
@@ -156,6 +160,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                         + URLEncoder.encode("picture", "UTF-8") + "=" + URLEncoder.encode(ba1, "UTF-8") + "&"
                         + URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(User_id, "UTF-8") + "&"
                         + URLEncoder.encode("calorie", "UTF-8") + "=" + URLEncoder.encode(Calorie, "UTF-8") + "&"
+                        + URLEncoder.encode("join_leave_id", "UTF-8") + "=" + URLEncoder.encode(join_leave_id, "UTF-8") + "&"
+                        + URLEncoder.encode("group_id", "UTF-8") + "=" + URLEncoder.encode(group_id, "UTF-8") + "&"
                         + URLEncoder.encode("imagename", "UTF-8") + "=" + URLEncoder.encode(ImageName, "UTF-8");
 
                 bufferedWriter.write(post_data);
@@ -183,7 +189,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         }
         //---------------------------------------getExpAndCalAvg-----------------------------------------------
         else if (type.equals("getExpCalAvg")) {
-            try{
+            try {
                 URL url = new URL(expandcal_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("POST");
@@ -201,9 +207,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 inputStream.close();
                 httpURLConnection.disconnect();
                 return result;
-            }catch (MalformedURLException e){
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -260,15 +266,51 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 outputStream.close();
 
                 InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
                 String result = "";
                 String line = "";
                 while ((line = bufferedReader.readLine()) != null) {
                     result += line;
                 }
-                String[] getgroupname = result.split(":");
-                group_name = getgroupname[1];
-                result = getgroupname[0];
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        //----------------------------------------------------LeaveGroup--------------------------------------------------------
+        else if (type.equals("leavegroup")) {
+            String user_id = params[1];
+            String group_id = params[2];
+
+            try {
+                URL url = new URL(leave_group_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                        + URLEncoder.encode("group_id", "UTF-8") + "=" + URLEncoder.encode(group_id, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
@@ -295,30 +337,32 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         if (result.equals("Registration Success...")) { //---Register
             Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
             return;
-        }else if (result.equals("CreateGroup Success...")) { //---CreateGroup
+        } else if (result.equals("CreateGroup Success...")) { //---CreateGroup
             Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
-        }
-        else if (result.equals("Group Login Success ")){ //---JoinGroup
+        } else if (result.equals("เข้าร่วมกลุ่มสำเร็จ")) { //---JoinGroup
             alertDialog.setMessage(result);
             alertDialog.show();
 
             Intent intent = new Intent(ctx, home_all.class);
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putString("group_name", group_name);
-            editor.commit();
             ctx.startActivity(intent);
             ((Activity) ctx).finish();
-
-        }
-        else if (result.equals("Login again")){//---JoinGroup
+        } else if (result.equals("ชื่อกลุ่มหรือรหัสผ่านผิดกรุณาลองใหม่อีกครั้ง")) {//---JoinGroup
             alertDialog.setMessage(result);
             alertDialog.show();
-        }
-        else if (result.equals("insert not success")){//---JoinGroup
+        } else if (result.equals("คุณเข้าร่วมกลุ่มนี้อยู่แล้ว")) {//---JoinGroup
             alertDialog.setMessage(result);
             alertDialog.show();
-        }
-        else if (result.equals("addMenu Success....")) { //---AddMenu
+        } else if (result.equals("ไม่สามารถเข้าร่วมกลุ่มได้")) {//---JoinGroup
+            alertDialog.setMessage(result);
+            alertDialog.show();
+        } else if (result.equals("ออกจากกลุ่มสำเร็จ")) {//---LeaveGroup
+            alertDialog.setMessage(result);
+            alertDialog.setTitle("LeaveGroup Status");
+            alertDialog.show();
+        } else if (result.equals("ออกจากกลุ่มไม่สำเร็จ")) {//---LeaveGroup
+            alertDialog.setMessage(result);
+            alertDialog.show();
+        } else if (result.equals("addMenu Success....")) { //---AddMenu
             alertDialog.setMessage(result);
             alertDialog.setTitle("AddMenu Status");
             alertDialog.show();
@@ -326,12 +370,11 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             Intent intent = new Intent(ctx, home_all.class);
             ctx.startActivity(intent);
             ((Activity) ctx).finish();
-        }
-        else if (result.equals("login 0")) { //---Login False
+        } else if (result.equals("login 0")) { //---Login False
             alertDialog.setMessage(result);
             alertDialog.show();
 
-        }else if (result.equals("4 5 24 117 65 142")){ //---Get CalandExpAvg
+        } else if (result.equals("4 5 24 117 65 142")) { //---Get CalandExpAvg
             String[] getexpandcal = result.split(" ");
             String expmeat = getexpandcal[0];
             String expvetg = getexpandcal[1];
@@ -347,13 +390,12 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             editor.putString("calvetg", calvetg);
             editor.putString("calother", calother);
             editor.commit();
-        }
-        else { //---Login Success
+        } else { //---Login Success
             String[] getid = result.split(" ");
             String id = getid[1];
             String name = getid[2];
 
-            alertDialog.setMessage(getid[0]+getid[1]);
+            alertDialog.setMessage(getid[0] + getid[1]);
             alertDialog.show();
 
             Intent intent = new Intent(ctx, home_all.class);

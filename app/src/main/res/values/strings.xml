@@ -20,6 +20,9 @@
     <string name="menu4">ออกจากระบบ</string>
     <string name="types">ประเภท</string>
 
+    <string name="myself">ผู้ใช้</string>
+    <string name="group">กลุ่ม:ไม่มี</string>
+
 
     <string name="from_date">From Date</string>
     <string name="to_date">To Date</string>

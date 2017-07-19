@@ -19,6 +19,7 @@
             android:padding="9dp">
 
             <TextView
+                android:id="@+id/text1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/adddata" />
@@ -68,15 +69,14 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="20sp" />
 
-                    <EditText
-                        android:id="@+id/editText"
+                    <AutoCompleteTextView
+                        android:id="@+id/autocompleteadd"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:ems="8"
                         android:hint="ชื่อสินค้า"
-                        android:maxLines="1"
-                        android:inputType="textAutoComplete"/>
+                        android:maxLines="1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -99,9 +99,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="0"
-                        android:maxLines="1"
                         android:ems="4"
-                        android:hint="1,2,3..." />
+                        android:hint="1,2,3..."
+                        android:maxLines="1" />
 
                     <Spinner
                         android:id="@+id/spinner1"
@@ -180,7 +180,6 @@
             </LinearLayout>
 
 
-
             <Button
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
@@ -193,8 +192,8 @@
 
             <ImageView
                 android:id="@+id/imagepicture"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="135dp"
+                android:layout_height="135dp"
                 android:layout_above="@+id/linearLayout"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/photo" />
@@ -207,6 +206,7 @@
                 android:layout_centerHorizontal="true"
                 android:text=""
                 android:textColor="#ff4d8a" />
+
             <TextView
                 android:id="@+id/avgoutput"
                 android:layout_width="wrap_content"

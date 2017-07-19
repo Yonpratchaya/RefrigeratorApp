@@ -27,7 +27,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="60dp"
                 android:background="@drawable/selector_button2"
-                android:src="@drawable/join2" />
+                android:src="@drawable/join" />
 
             <ImageButton
                 android:id="@+id/CreateGroup"
@@ -37,7 +37,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button2"
-                android:src="@drawable/creategroup2" />
+                android:src="@drawable/creategroup" />
 
             <ImageButton
                 android:id="@+id/LeaveGroup"
@@ -47,7 +47,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/selector_button2"
-                android:src="@drawable/levegroup2" />
+                android:src="@drawable/leavegroup" />
 
 
         </RelativeLayout>

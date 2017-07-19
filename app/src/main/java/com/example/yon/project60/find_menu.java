@@ -76,6 +76,16 @@ public class find_menu extends AppCompatActivity
                 return true;
             case R.id.action_find:
                 return true;
+          /*  case R.id.myself:
+                Intent intent2 = new Intent(this, home_all.class);
+                startActivity(intent2);
+                finish();
+            case R.id.group1:
+                return true;
+            case R.id.group2:
+                return true;
+            case R.id.group3:
+                return true;*/
         }
 
         if (actionBarDrawerToggle.onOptionsItemSelected(item))
