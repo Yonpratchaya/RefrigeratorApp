@@ -8,17 +8,17 @@
     <string name="menu3">กลุ่มผู้ใช้</string>
     <string name="action_settings">Settings</string>
     <string name="action_add">add</string>
-    <string name="action_find">findgroup</string>
-    <string name="search">SEARCH</string>
-    <string name="menusearch">ค้นหา</string>
+    <string name="action_find">เลือกกลุ่ม</string>
+    <string name="search">ค้นหา</string>
     <string name="adddata">เพิ่มรายการ</string>
     <string name="username">ชื่อ</string>
     <string name="amount">จำนวน</string>
     <string name="exe">วันหมดอายุ</string>
     <string name="success">เสร็จสิ้น</string>
-    <string name="app_name2">แอพจัดดการของสดในตู้เย็น</string>
+    <string name="app_name2">จัดการของสดในตู้เย็น</string>
     <string name="menu4">ออกจากระบบ</string>
     <string name="types">ประเภท</string>
+    <string name="homeall_name">ตู้เย็น</string>
 
     <string name="myself">ผู้ใช้</string>
     <string name="group">กลุ่ม:ไม่มี</string>

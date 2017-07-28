@@ -14,10 +14,11 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="จัดการของสดในตู้เย็น"
+        android:label="@string/app_name2"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +26,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".register_form"/>
-        <activity android:name=".home_all"/>
+        <activity android:name=".home_all"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
         <activity android:name=".add_menu">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -39,7 +45,6 @@
         <activity android:name=".group_menu"/>
         <activity android:name=".create_group"/>
         <activity android:name=".join_group"/>
-        <activity android:name=".leave_group"/>
 
     </application>
 

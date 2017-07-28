@@ -47,7 +47,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String host_ip = "10.105.24.132";
+        String host_ip = "192.168.137.1";
         String reg_url = "http://" + host_ip + "/webapp/register.php";
         String login_url = "http://" + host_ip + "/webapp/login.php";
         String Add_url = "http://" + host_ip + "/webapp/fresh_list.php";
@@ -382,6 +382,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             String calmeat = getexpandcal[3];
             String calvetg = getexpandcal[4];
             String calother = getexpandcal[5];
+            Intent intent = new Intent(ctx, add_menu.class);
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("expmeat", expmeat);
             editor.putString("expvetg", expvetg);
@@ -390,6 +391,8 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             editor.putString("calvetg", calvetg);
             editor.putString("calother", calother);
             editor.commit();
+            ctx.startActivity(intent);
+            ((Activity) ctx).finish();
         } else { //---Login Success
             String[] getid = result.split(" ");
             String id = getid[1];

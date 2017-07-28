@@ -1,6 +1,7 @@
 package com.example.yon.project60;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -101,19 +102,21 @@ public class add_menu extends AppCompatActivity
     String ba1;
     String mCurrentPhotoPath;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    private static final String host_ip = "10.105.24.132";
+    private static final String host_ip = "192.168.137.1";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
 
     // Autocomplete
     private AutoCompleteTextView Autocomplete;
     String aaa = null;
-
-
+    private List<String> list;
+    private List<String> listb;
+    private List<String> listc;
+    String freshname ;
+    AlertDialog alertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_menu);
-
 
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
@@ -131,7 +134,7 @@ public class add_menu extends AppCompatActivity
         if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
             txtadd.setText("เพิ่มรายการ ตู้เย็นของฉัน");
         }else{
-            txtadd.setText("เพิ่มรายการ ตู้เย็นของ "+ group_name);
+            txtadd.setText("เพิ่มรายการ "+ group_name);
         }
         //Spinner
         spinner();
@@ -172,7 +175,18 @@ public class add_menu extends AppCompatActivity
         TYPENAME = (Spinner) findViewById(R.id.spinner2);
 
         //---------------------เลือกวันหมดอายุจากฐานข้อมูลและแคลลอรี------------------------------//
-        ExpFromDatabase();
+        dateNow = LocalDate.now();
+        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getExpDateFromDatabase();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         //---------------------------CaptureImage-------------------------------------------
         this.imageView = (ImageView) this.findViewById(R.id.imagepicture);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -200,14 +214,15 @@ public class add_menu extends AppCompatActivity
         });
 
 
-        ///------------------------------Autoconplete-----------------------------
+        ///------------------------------Autocomplete-----------------------------
         Autocomplete = (AutoCompleteTextView) findViewById(autocompleteadd);
-        final List<String> list = new ArrayList<String>();
+        list = new ArrayList<String>();
+        listb = new ArrayList<String>();
+        listc = new ArrayList<String>();
 
-
-        Autocomplete.setOnClickListener(new View.OnClickListener() {
+        Autocomplete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View view) {
+            public void onFocusChange(View view, boolean hasFocus) {
                 //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
                 RequestQueue queue = Volley.newRequestQueue(add_menu.this);
                 final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_baseAdd + "?user_id=" + user_id, null, new Response.Listener<JSONObject>() {
@@ -219,20 +234,18 @@ public class add_menu extends AppCompatActivity
                             for (int i = 0; i < productArray.length(); i++) {
                                 JSONObject jo = productArray.getJSONObject(i);
                                 String a = jo.getString("fresh_name");
-
+                                String b = jo.getString("cal_gram");
+                                String c = jo.getString("exp");
                                 list.add(a);
-
-
-
+                                listb.add(b);
+                                listc.add(c);
                             }
                             ///------------------------------Autoconplete-----------------------------
                             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(add_menu.this, android.R.layout.simple_dropdown_item_1line, list);
                             AutoCompleteTextView autocomplete = (AutoCompleteTextView) add_menu.this.findViewById(autocompleteadd);
                             autocomplete.setAdapter(dataAdapter);
 
-                           //  aaa = Autocomplete.getText().toString();
-                            Toast.makeText(add_menu.this,aaa,Toast.LENGTH_LONG).show();
-
+                            aaa = Autocomplete.getText().toString();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -272,7 +285,7 @@ public class add_menu extends AppCompatActivity
     }
 
     public void AddMenu(View view) {
-        if(group_name.equals("ตู้เย็นของฉัน")){
+        if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
             join_leave_id = "0";
             group_id = "0";
             addedmenu();
@@ -300,11 +313,15 @@ public class add_menu extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_add:
+            case R.id.action_search:
+                alertDialog = new AlertDialog.Builder(add_menu.this).create();
+                alertDialog.setMessage("สามารถค้นหารายการได้ในหน้าแรก");
+                alertDialog.show();
                 return true;
             case R.id.action_find:
-                Intent intent2 = new Intent(this, find_menu.class);
+                Intent intent2 = new Intent(this, home_all.class);
                 startActivity(intent2);
+                finish();
                 //setContentView(R.layout.find_menu);
                 return true;
         }
@@ -374,13 +391,6 @@ public class add_menu extends AppCompatActivity
     public void rbClick(View view) {
         // Is the button now checked?
         boolean checked = ((RadioButton) view).isChecked();
-
-      /*  String aaa = Autocomplete.getText().toString();
-        String bbb = ET_AMOUNT.getText().toString();
-        String ccc = ET_EXP.getText().toString();
-        Toast.makeText(add_menu.this, aaa + bbb + ccc, Toast.LENGTH_LONG).show();
-         if (aaa == autocompleteadd) {*/
-
         // Check which radio button was clicked
         switch (view.getId()) {
             case R.id.radioButton1:
@@ -413,8 +423,9 @@ public class add_menu extends AppCompatActivity
                 break;
             case R.id.radioButton2:
                 if (checked) {
-                    selectdb.setText("เลือกวันหมดอายุจากฐานข้อมูล");
-                    avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
+                    //selectdb.setText("เลือกวันหมดอายุจากฐานข้อมูล");
+                    //avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
+                    getExpDateFromDatabase();
                     expcheck = "0";
                 }
                 break;
@@ -424,42 +435,52 @@ public class add_menu extends AppCompatActivity
     }
 
     //----------------เลือกวันหมดอายุเฉลี่ยและแคลลอรี่เฉลี่ย-----------------------------
-    public void ExpFromDatabase() {
-        dateNow = LocalDate.now();
-        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                typecheck = TYPENAME.getSelectedItem().toString();
-                if (typecheck.equals("เนื้อ")) {
-                    avgdays = Integer.parseInt(ExpAvgMeat);
-                    LocalDate datethen = dateNow.plusDays(avgdays);
-                    b = datethen.toString("yyyy-MM-dd");
-                    Calorie = CalAvgMeat;
-                } else if (typecheck.equals("ผักและผลไม้")) {
-                    avgdays = Integer.parseInt(ExpAvgVetg);
-                    LocalDate datethen = dateNow.plusDays(avgdays);
-                    b = datethen.toString("yyyy-MM-dd");
-                    Calorie = CalAvgVetg;
-                } else {
-                    avgdays = Integer.parseInt(ExpAvgOther);
-                    LocalDate datethen = dateNow.plusDays(avgdays);
-                    b = datethen.toString("yyyy-MM-dd");
-                    Calorie = CalAvgOther;
-                }
+    public void getExpDateFromDatabase() {
+        final String aaa = Autocomplete.getText().toString();
+        typecheck = TYPENAME.getSelectedItem().toString();
 
-                RadioButton b2 = (RadioButton) findViewById(R.id.radioButton2);
-                if (b2.isChecked()) {
-                    selectdb.setText("ค่าเฉลี่ยวันหมดอายุจากฐานข้อมูล");
-                    avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
-                }
-
+        //------------------------------- ค้นหาชื่อใน get baseAdd เพื่อเอาวันหมดอายุของสดมาแสดง -------------------------------
+        for(int i =0; i<list.size();i++){
+            if (aaa.equals(list.get(i))) {
+                avgdays = Integer.parseInt(listc.get(i));
+                Calorie = listb.get(i);
+                freshname = list.get(i);
+                break;
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            else{
+                freshname = null;
             }
-        });
+        }
+
+        if (freshname != null){
+            LocalDate datethen = dateNow.plusDays(avgdays);
+            b = datethen.toString("yyyy-MM-dd");
+
+        }
+        else{
+            if(typecheck.equals("เนื้อ")) {
+                avgdays = Integer.parseInt(ExpAvgMeat);
+                LocalDate datethen = dateNow.plusDays(avgdays);
+                b = datethen.toString("yyyy-MM-dd");
+                Calorie = CalAvgMeat;
+            } else if (typecheck.equals("ผักและผลไม้")) {
+                avgdays = Integer.parseInt(ExpAvgVetg);
+                LocalDate datethen = dateNow.plusDays(avgdays);
+                b = datethen.toString("yyyy-MM-dd");
+                Calorie = CalAvgVetg;
+            } else {
+                avgdays = Integer.parseInt(ExpAvgOther);
+                LocalDate datethen = dateNow.plusDays(avgdays);
+                b = datethen.toString("yyyy-MM-dd");
+                Calorie = CalAvgOther;
+            }
+        }
+        RadioButton b2 = (RadioButton) findViewById(R.id.radioButton2);
+        if (b2.isChecked()) {
+            selectdb.setText("ค่าเฉลี่ยวันหมดอายุจากฐานข้อมูล");
+            avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
+        }
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

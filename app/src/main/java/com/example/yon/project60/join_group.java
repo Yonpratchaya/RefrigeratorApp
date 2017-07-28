@@ -121,7 +121,7 @@ public class join_group extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_add:
+            case R.id.fab:
                 return true;
             case R.id.action_find:
                 Intent intent2 = new Intent(this, find_menu.class);

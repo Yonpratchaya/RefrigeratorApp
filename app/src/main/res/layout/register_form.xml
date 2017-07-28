@@ -10,15 +10,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.yon.project60.MainActivity">
 
-
-    <TextView
-        android:id="@+id/textregister"
+    <RelativeLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="Registration Form"
-        android:textColor="#000000"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/textregister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Registration Form"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/Name"
@@ -26,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/textregister"
+        android:layout_below="@+id/headerLayout"
         android:layout_marginTop="28dp">
 
         <TextView

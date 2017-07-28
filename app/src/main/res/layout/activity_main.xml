@@ -14,22 +14,22 @@
         android:id="@+id/textLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:gravity="center_horizontal"
         android:text="Login Form"
         android:textColor="#000000"
-        android:textSize="20sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:textSize="20sp" />
 
     <LinearLayout
         android:id="@+id/Username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_below="@+id/textLogin"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textLogin"
+        android:layout_marginTop="28dp">
 
         <TextView
             android:id="@+id/textView"
@@ -44,9 +44,12 @@
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="90dp"
+            android:layout_marginRight="80dp"
             android:layout_weight="1"
-            android:hint="Username" />
+            android:hint="Username"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:inputType="textAutoComplete"/>
     </LinearLayout>
 
     <LinearLayout
@@ -67,32 +70,33 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="90dp"
+            android:layout_marginRight="80dp"
             android:layout_weight="1"
             android:hint="Password"
-            android:inputType="textPassword"/>
+            android:maxLength="20"
+            android:maxLines="1"
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/register_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="userReg"
-        android:text="Register"
-        android:textColor="#2600ff"
         android:layout_below="@+id/Password"
         android:layout_marginLeft="119dp"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5dp"
+        android:onClick="userReg"
+        android:text="Register"
+        android:textColor="#2600ff" />
 
     <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="OnLogin"
-        android:text="Login"
-        android:id="@+id/button"
         android:layout_below="@+id/Password"
+        android:layout_centerInParent="true"
         android:layout_marginTop="40dp"
-        android:layout_centerInParent="true"/>
-
+        android:onClick="OnLogin"
+        android:text="Login" />
 
 </RelativeLayout>

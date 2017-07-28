@@ -39,9 +39,9 @@ import java.util.List;
  */
 
 public class group_menu extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
     SharedPreferences sharedpreferences;
-    private static final String host_ip = "10.105.24.132";
+    private static final String host_ip = "192.168.137.1";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
 
     DrawerLayout drawerLayout;
@@ -49,7 +49,7 @@ public class group_menu extends AppCompatActivity
     NavigationView navigationView;
 
     ImageView Join, Create, Leave;
-    private String user_id,join_leave_id, group_id, group_name;
+    private String user_id, join_leave_id, group_id, group_name;
     private String mSelected = "ตู้เย็นของฉัน";
     private String[] group_names, group_ids, join_leave_ids;
     private int mSelectedIndex = 0;
@@ -149,7 +149,7 @@ public class group_menu extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_add:
+            case R.id.fab:
                 return true;
             case R.id.action_find:
                 Intent intent2 = new Intent(this, find_menu.class);
@@ -163,25 +163,28 @@ public class group_menu extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    private void join(){
+
+    private void join() {
         Join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(group_menu.this,join_group.class);
+                Intent intent = new Intent(group_menu.this, join_group.class);
                 startActivity(intent);
             }
         });
     }
-    private void create(){
+
+    private void create() {
         Create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(group_menu.this,create_group.class);
+                Intent intent = new Intent(group_menu.this, create_group.class);
                 startActivity(intent);
             }
         });
     }
-    private void leave(){
+
+    private void leave() {
         Leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,17 +204,24 @@ public class group_menu extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // ส่วนนี้สำหรับเซฟค่าลง database หรือ SharedPreferences.
-                        Toast.makeText(getApplicationContext(), "ออกจากกลุ่ม " +
-                                mSelected, Toast.LENGTH_SHORT).show();
+                        if (group_names.length == 0) {
+                            dialog.dismiss();
+                        } else {
+                            if (mSelected.equals("ตู้เย็นของฉัน")) {
+                            } else
+                                Toast.makeText(getApplicationContext(), "ออกจากกลุ่ม " +
+                                        mSelected, Toast.LENGTH_SHORT).show();
 
-                            String[] getgroup_name = mSelected.split(" ");
-                            mSelected = getgroup_name[1];
+                     /*       String[] getgroup_name = mSelected.split(" ");
+                            mSelected = getgroup_name[1];*/
                             group_id = group_ids[mSelectedIndex];
                             String type = "leavegroup";
                             BackgroundTask backgroundTask = new BackgroundTask(group_menu.this);
                             backgroundTask.execute(type, user_id, group_id);
 
-                        dialog.dismiss();
+                            dialog.dismiss();
+                            recreate();
+                        }
                     }
                 });
 
@@ -223,6 +233,7 @@ public class group_menu extends AppCompatActivity
             }
         });
     }
+
     private void getgroup() {
         final List<String> group_list = new ArrayList<String>();
         final List<String> group_list2 = new ArrayList<String>();

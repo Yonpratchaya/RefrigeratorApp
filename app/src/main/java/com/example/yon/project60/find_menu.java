@@ -69,7 +69,7 @@ public class find_menu extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_add:
+            case R.id.fab:
                 Intent intent = new Intent(this, add_menu.class);
                 startActivity(intent);
                 //setContentView(R.layout.add_menu);

@@ -20,8 +20,8 @@
                 android:id="@+id/createlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textgroupform"
@@ -31,7 +31,6 @@
                     android:text="CreateGroup Form"
                     android:textColor="#000000"
                     android:textSize="20sp" />
-
 
 
                 <LinearLayout
@@ -55,7 +54,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="90dp"
                         android:layout_weight="1"
-                        android:hint="Groupname" />
+                        android:hint="Groupname"
+                        android:maxLength="20" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -78,7 +78,8 @@
                         android:layout_marginRight="90dp"
                         android:layout_weight="1"
                         android:hint="Password"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:maxLength="20" />
                 </LinearLayout>
 
 
@@ -93,8 +94,6 @@
                 android:layout_marginTop="10dp"
                 android:onClick="Creategroup"
                 android:text="CREATE" />
-
-
 
 
         </RelativeLayout>
