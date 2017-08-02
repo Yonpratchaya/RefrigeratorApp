@@ -29,9 +29,11 @@
 
     <string-array name="unitarray">
         <item>กรัม</item>
-        <item>ชิ้น</item>
-        <item>อัน</item>
         <item>ขวด</item>
+        <item>ชิ้น</item>
+        <item>ฟอง</item>
+        <item>อัน</item>
+
     </string-array>
 
     <string-array name="typearray">

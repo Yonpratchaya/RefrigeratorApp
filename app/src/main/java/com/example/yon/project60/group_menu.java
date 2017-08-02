@@ -41,7 +41,7 @@ import java.util.List;
 public class group_menu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     SharedPreferences sharedpreferences;
-    private static final String host_ip = "192.168.137.1";
+    private static final String host_ip = "10.105.15.86";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
 
     DrawerLayout drawerLayout;

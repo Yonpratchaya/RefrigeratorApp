@@ -47,7 +47,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String host_ip = "192.168.137.1";
+        String host_ip = "10.105.15.86";
         String reg_url = "http://" + host_ip + "/webapp/register.php";
         String login_url = "http://" + host_ip + "/webapp/login.php";
         String Add_url = "http://" + host_ip + "/webapp/fresh_list.php";

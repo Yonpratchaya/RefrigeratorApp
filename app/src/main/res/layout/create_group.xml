@@ -28,7 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="CreateGroup Form"
+                    android:text="Create Group Form"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
