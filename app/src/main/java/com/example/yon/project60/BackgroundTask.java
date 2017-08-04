@@ -55,6 +55,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         String creategroup_url = "http://" + host_ip + "/webapp/create_group.php";
         String joingroup_url = "http://" + host_ip + "/webapp/join_group.php";
         String leave_group_url = "http://" + host_ip + "/webapp/leave_group.php";
+        String fresh_delete_url = "http://" + host_ip + "/webapp/fresh_list_delete.php";
 
         String type = params[0];
 
@@ -322,6 +323,46 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             }
 
         }
+        //----------------------------------------------------DeleteFreshList--------------------------------------------------------
+        else if (type.equals("DelFreshList")) {
+            String user_id = params[1];
+            String group_id = params[2];
+            String valuefresh = params[3];
+
+            try {
+                URL url = new URL(fresh_delete_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                        + URLEncoder.encode("group_id", "UTF-8") + "=" + URLEncoder.encode(group_id, "UTF-8") + "&"
+                        + URLEncoder.encode("valuefresh", "UTF-8") + "=" + URLEncoder.encode(valuefresh, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         return null;
     }
@@ -360,6 +401,11 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             alertDialog.setTitle("LeaveGroup Status");
             alertDialog.show();
         } else if (result.equals("ออกจากกลุ่มไม่สำเร็จ")) {//---LeaveGroup
+            alertDialog.setMessage(result);
+            alertDialog.show();
+        } else if (result.equals("ลบสำเร็จ")) {//---DeleteFreshList
+
+        }  else if (result.equals("ลบไม่สำเร็จ")) {//---DeleteFreshList
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("addMenu Success....")) { //---AddMenu

@@ -13,6 +13,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="DialogTheme" parent="android:Theme.Holo.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_border</item>
+    </style>
+
     <style name="myDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
         <item name="android:textColor">@color/secondary_text_default_material_light</item>
     </style>

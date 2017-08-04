@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
@@ -51,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -78,6 +80,9 @@ public class home_all extends AppCompatActivity
     private String mSelected;
     private String[] group_names, group_ids, join_leave_ids;
     private int mSelectedIndex;
+    private String[] dialogitems = {"แก้ไขรายการ", "ลบรายการ"};
+    private String[] listindex;
+    private List<String> getfresh_list_id;
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -161,7 +166,8 @@ public class home_all extends AppCompatActivity
             setTitle(group_name);
             showItemGroup();
         }
-
+//-----------------------------AlertdialogListview-----------------------------------------//
+        getdialogList();
 //-----------------------------GetGroup----------------------------------------------------//
         getgroup();
 
@@ -235,8 +241,8 @@ public class home_all extends AppCompatActivity
                             setTitle(mSelected);
                             showItemMyself();
                         } else {
-              //              String[] getgroup_name = mSelected.split(" ");
-              //              mSelected = getgroup_name[1];
+                            //String[] getgroup_name = mSelected.split(" ");
+                            //mSelected = getgroup_name[1];
                             setTitle(mSelected);
                             showItemGroup();
                         }
@@ -428,6 +434,7 @@ public class home_all extends AppCompatActivity
     private void showItemMyself() {
         freshList.clear();
         adapter.notifyDataSetChanged();
+        getfresh_list_id = new ArrayList<String>();
         //---------------------List View--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Values_url + "?user_id=" + user_id + "&" + "group_id=", null, new Response.Listener<JSONObject>() {
@@ -452,6 +459,8 @@ public class home_all extends AppCompatActivity
                         int days = Days.daysBetween(dateNow, datemenu2).getDays();
                         String daysexe = (days + " วัน");
 
+                        getfresh_list_id.add(jo.getString("fresh_list_id"));
+
                         Fresh fresh = new Fresh();
                         fresh.setfresh_list_id(jo.getString("fresh_list_id"));
                         fresh.setfresh_name(jo.getString("fresh_name"));
@@ -468,6 +477,8 @@ public class home_all extends AppCompatActivity
 
                     }
                     listView.setAdapter(adapter);
+                    listindex = getfresh_list_id.toArray(new String[getfresh_list_id.size()]);
+                     Log.i("showitem","value is"+ Arrays.toString(listindex));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -491,6 +502,7 @@ public class home_all extends AppCompatActivity
     private void showItemGroup() {
         freshList.clear();
         adapter.notifyDataSetChanged();
+        getfresh_list_id = new ArrayList<String>();
         //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(home_all.this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Values_url + "?user_id=" + "&" + "group_id=" + group_id, null, new Response.Listener<JSONObject>() {
@@ -516,6 +528,7 @@ public class home_all extends AppCompatActivity
                         String daysexe = (days + " วัน");
                         // System.out.println(days);
                         //  System.out.println(dateNow);
+                        getfresh_list_id.add(jo.getString("fresh_list_id"));
 
                         Fresh fresh = new Fresh();
                         fresh.setfresh_list_id(jo.getString("fresh_list_id"));
@@ -532,6 +545,8 @@ public class home_all extends AppCompatActivity
                         freshList.add(fresh);
                     }
                     listView.setAdapter(adapter);
+                    listindex = getfresh_list_id.toArray(new String[getfresh_list_id.size()]);
+                     Log.i("showitem","value is"+ Arrays.toString(listindex));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -552,10 +567,10 @@ public class home_all extends AppCompatActivity
         queue.add(jsonObjectRequest);
     }
 
-    private void sharedpreferencesOfGroup(){
+    private void sharedpreferencesOfGroup() {
         join_leave_id = sharedpreferences.getString("join_leave_id", null);
         group_id = sharedpreferences.getString("group_id", null);
-        group_name = sharedpreferences.getString("group_name",null);
+        group_name = sharedpreferences.getString("group_name", null);
         mSelected = sharedpreferences.getString("group_name", "ตู้เย็นของฉัน");
         mSelectedIndex = sharedpreferences.getInt("mSelectedIndex", 0);
     }
@@ -665,6 +680,59 @@ public class home_all extends AppCompatActivity
         });
         queue.add(jsonObjectRequest);
 
+    }
+
+    private void getdialogList(){
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(home_all.this);
+                builder.setTitle("เมนู");
+                builder.setItems(dialogitems, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String selected = dialogitems[which];
+                        if(selected.equals("แก้ไขรายการ")){
+                        }
+                        else if(selected.equals("ลบรายการ")){
+
+                            AlertDialog.Builder builder =
+                                    new AlertDialog.Builder(home_all.this);
+                            builder.setMessage("ลบรายการนี้ออกจากตู้เย็น?");
+                            builder.setPositiveButton("ลบ", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    String ValFreshlistID = listindex[position];
+                                    String type = "DelFreshList";
+                                    BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
+                                    if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
+                                        group_id = "0";
+                                        backgroundTask.execute(type, user_id, group_id, ValFreshlistID);
+                                        showItemMyself();
+                                    } else {
+                                        backgroundTask.execute(type, user_id, group_id, ValFreshlistID);
+                                        showItemGroup();
+                                    }
+                                }
+                            });
+                            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.show();
+                        }
+
+                    }
+                });
+                builder.create();
+
+                // สุดท้ายอย่าลืม show() ด้วย
+                builder.show();
+                return false;
+            }
+        });
     }
 
 }
