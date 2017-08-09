@@ -51,7 +51,7 @@ public class CustomAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = Inflater.inflate(R.layout.item, parent, false);
             holder = new ViewHolder();
-            holder.Order = (TextView) convertView.findViewById(R.id.rowid);
+           // holder.Order = (TextView) convertView.findViewById(R.id.rowid);
             holder.Picture = (ImageView) convertView.findViewById(R.id.image_Layout);
             holder.Name = (TextView) convertView.findViewById(R.id.content);
             holder.Amount = (TextView) convertView.findViewById(R.id.content2);
@@ -65,7 +65,7 @@ public class CustomAdapter extends BaseAdapter {
         // getting movie data for the row
         Fresh m = freshItems.get(position);
 
-        holder.Order.setText(m.getfresh_list_id());
+       // holder.Order.setText(m.getfresh_list_id());
         holder.Name.setText(m.getfresh_name());
         holder.Amount.setText(m.getamount()+m.getunit());
         holder.Exp.setText(m.getexp());

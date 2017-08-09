@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
         editor.commit();
 
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("com.package.ACTION_LOGOUT");
+        sendBroadcast(broadcastIntent);
     }
 
     public void OnLogin(View view) {

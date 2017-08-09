@@ -13,8 +13,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="DialogTheme" parent="android:Theme.Holo.Dialog">
-        <item name="android:windowBackground">@drawable/dialog_border</item>
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name="android:textColor">#00FF00</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textSize">10sp</item>
     </style>
 
     <style name="myDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">

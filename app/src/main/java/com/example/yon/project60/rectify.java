@@ -2,22 +2,26 @@ package com.example.yon.project60;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -27,32 +31,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.graphics.Bitmap;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
-import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
-import android.text.InputType;
-import android.widget.DatePicker;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -67,14 +52,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import static com.example.yon.project60.R.id.autocompleteadd;
 
-
 /**
- * Created by Yon on 22/2/2560.
+ * Created by Yon on 8/8/2560.
  */
 
-public class add_menu extends AppCompatActivity
+public class rectify extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     SharedPreferences sharedpreferences;
     String user_id, expcheck, typecheck, b, ExpAvgMeat, ExpAvgVetg, ExpAvgOther, CalAvgMeat, CalAvgVetg, CalAvgOther;
@@ -84,6 +78,7 @@ public class add_menu extends AppCompatActivity
     LocalDate dateNow;
     int avgdays;
     private String join_leave_id, group_id, group_name;
+    String ValFreshlistID,ValFreshName,ValAmount,Valunit,ValTypeName,Valexp;
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -96,7 +91,7 @@ public class add_menu extends AppCompatActivity
 
     //UI References
     private EditText DateEtxt;
-    private DatePickerDialog DatePickerDialog;
+    private android.app.DatePickerDialog DatePickerDialog;
     private SimpleDateFormat dateFormatter;
     //Camera
     private static final int CAMERA_REQUEST = 1888;
@@ -118,25 +113,35 @@ public class add_menu extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_menu);
+        setContentView(R.layout.rectify);
 
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
         join_leave_id = sharedpreferences.getString("join_leave_id", null);
         group_id = sharedpreferences.getString("group_id", null);
         group_name = sharedpreferences.getString("group_name",null);
-        ExpAvgMeat = sharedpreferences.getString("expmeat", null);
-        ExpAvgVetg = sharedpreferences.getString("expvetg", null);
-        ExpAvgOther = sharedpreferences.getString("expother", null);
-        CalAvgMeat = sharedpreferences.getString("calmeat", null);
-        CalAvgVetg = sharedpreferences.getString("calvetg", null);
-        CalAvgOther = sharedpreferences.getString("calother", null);
+        ExpAvgMeat = sharedpreferences.getString("expmeat", "4");
+        ExpAvgVetg = sharedpreferences.getString("expvetg", "5");
+        ExpAvgOther = sharedpreferences.getString("expother", "24");
+        CalAvgMeat = sharedpreferences.getString("calmeat", "117");
+        CalAvgVetg = sharedpreferences.getString("calvetg", "65");
+        CalAvgOther = sharedpreferences.getString("calother", "142");
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            ValFreshlistID = bundle.getString("ValFreshlistID");
+            ValFreshName = bundle.getString("ValFreshName");
+            ValAmount = bundle.getString("ValAmount");
+            Valunit = bundle.getString("Valunit");
+            ValTypeName = bundle.getString("ValTypeName");
+            Valexp = bundle.getString("Valexp");
+        }
 
         txtadd = (TextView) findViewById(R.id.text1);
         if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
-            txtadd.setText("เพิ่มรายการ ตู้เย็นของฉัน");
+            txtadd.setText("แก้ไขรายการ ตู้เย็นของฉัน");
         }else{
-            txtadd.setText("เพิ่มรายการ "+ group_name);
+            txtadd.setText("แก้ไขรายการ "+ group_name);
         }
         //Spinner
         spinner();
@@ -154,7 +159,7 @@ public class add_menu extends AppCompatActivity
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
-                add_menu.this,
+                rectify.this,
                 drawerLayout,
                 R.string.open_menu,
                 R.string.close_menu
@@ -175,6 +180,24 @@ public class add_menu extends AppCompatActivity
         ET_EXP = (EditText) findViewById(R.id.editTextdate);
         UNIT = (Spinner) findViewById(R.id.spinner1);
         TYPENAME = (Spinner) findViewById(R.id.spinner2);
+
+        Autocomplete.setText(ValFreshName);
+        ET_AMOUNT.setText(ValAmount);
+        ET_EXP.setText(Valexp);
+        final String[] Spinner1 = getResources().getStringArray(R.array.unitarray);
+        ArrayAdapter<String> adapterSpinner1 = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, Spinner1);
+        if (!Valunit.equals(null)) {
+            int spinnerPosition = adapterSpinner1.getPosition(Valunit);
+            UNIT.setSelection(spinnerPosition);
+        }
+        final String[] Spinner2 = getResources().getStringArray(R.array.typearray);
+        ArrayAdapter<String> adapterSpinner2 = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, Spinner2);
+        if (!ValTypeName.equals(null)) {
+            int spinnerPosition = adapterSpinner2.getPosition(ValTypeName);
+            TYPENAME.setSelection(spinnerPosition);
+        }
 
         //---------------------เลือกวันหมดอายุจากฐานข้อมูลและแคลลอรี------------------------------//
         dateNow = LocalDate.now();
@@ -226,7 +249,7 @@ public class add_menu extends AppCompatActivity
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
-                RequestQueue queue = Volley.newRequestQueue(add_menu.this);
+                RequestQueue queue = Volley.newRequestQueue(rectify.this);
                 final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_baseAdd + "?user_id=" + user_id, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -243,8 +266,8 @@ public class add_menu extends AppCompatActivity
                                 listc.add(c);
                             }
                             ///------------------------------Autoconplete-----------------------------
-                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(add_menu.this, android.R.layout.simple_dropdown_item_1line, list);
-                            AutoCompleteTextView autocomplete = (AutoCompleteTextView) add_menu.this.findViewById(autocompleteadd);
+                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(rectify.this, android.R.layout.simple_dropdown_item_1line, list);
+                            AutoCompleteTextView autocomplete = (AutoCompleteTextView) rectify.this.findViewById(autocompleteadd);
                             autocomplete.setAdapter(dataAdapter);
 
                             aaa = Autocomplete.getText().toString();
@@ -262,7 +285,7 @@ public class add_menu extends AppCompatActivity
                             String jsonError = new String(networkResponse.data);
                             // Print Error!
                         }
-                        Toast.makeText(add_menu.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(rectify.this, error.toString(), Toast.LENGTH_LONG).show();
                     }
 
                 });
@@ -328,7 +351,7 @@ public class add_menu extends AppCompatActivity
 
         switch (id) {
             case R.id.action_search:
-                alertDialog = new AlertDialog.Builder(add_menu.this).create();
+                alertDialog = new AlertDialog.Builder(rectify.this).create();
                 alertDialog.setMessage("สามารถค้นหารายการได้ในหน้าแรก");
                 alertDialog.show();
                 return true;
@@ -346,13 +369,13 @@ public class add_menu extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // ขยายเมนูให้แสดงใน action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -361,27 +384,27 @@ public class add_menu extends AppCompatActivity
 
         switch (id) {
             case R.id.home:
-                Intent intent3 = new Intent(add_menu.this, home_all.class);
+                Intent intent3 = new Intent(rectify.this, home_all.class);
                 startActivity(intent3);
                 finish();
                 return true;
             case R.id.suggest:
-                Intent intent4 = new Intent(add_menu.this, suggestlist_menu.class);
+                Intent intent4 = new Intent(rectify.this, suggestlist_menu.class);
                 startActivity(intent4);
                 finish();
                 return true;
             case R.id.shopping:
-                Intent intent5 = new Intent(add_menu.this, shoppinglist_menu.class);
+                Intent intent5 = new Intent(rectify.this, shoppinglist_menu.class);
                 startActivity(intent5);
                 finish();
                 return true;
             case R.id.group:
-                Intent intent6 = new Intent(add_menu.this, group_menu.class);
+                Intent intent6 = new Intent(rectify.this, group_menu.class);
                 startActivity(intent6);
                 finish();
                 return true;
             case R.id.exit:
-                Intent intent7 = new Intent(add_menu.this, MainActivity.class);
+                Intent intent7 = new Intent(rectify.this, MainActivity.class);
                 startActivity(intent7);
                 finish();
                 return true;
@@ -422,7 +445,7 @@ public class add_menu extends AppCompatActivity
 
 
                     Calendar newCalendar = Calendar.getInstance();
-                    DatePickerDialog = new DatePickerDialog(this, new OnDateSetListener() {
+                    DatePickerDialog = new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
 
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             Calendar newDate = Calendar.getInstance();
@@ -587,9 +610,17 @@ public class add_menu extends AppCompatActivity
             Exp = b;
         }
 
-        String type = "addMenu";
+        String type = "rectify";
         BackgroundTask backgroundTask = new BackgroundTask(this);
-        backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id);
+        if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
+            group_id = "0";
+            backgroundTask.execute(type,user_id, group_id, ValFreshlistID, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, Calorie);
+
+        } else {
+            backgroundTask.execute(type,user_id, group_id, ValFreshlistID, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, Calorie);
+
+        }
+
     }
 
 }

@@ -1,8 +1,10 @@
 package com.example.yon.project60;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,7 +44,7 @@ import java.util.List;
 public class group_menu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     SharedPreferences sharedpreferences;
-    private static final String host_ip = "10.105.15.86";
+    private static final String host_ip = "10.105.27.105";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
 
     DrawerLayout drawerLayout;
@@ -89,6 +92,18 @@ public class group_menu extends AppCompatActivity
 
         //-----------------------------GetGroup----------------------------------------------------//
         getgroup();
+
+        /**snip *logout already clear all activity**/
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.package.ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("onReceive","Logout in progress");
+                //At this point you should start the login activity and finish this one
+                finish();
+            }
+        }, intentFilter);
 
     }
 

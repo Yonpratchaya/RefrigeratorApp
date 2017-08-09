@@ -1,8 +1,10 @@
 package com.example.yon.project60;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -64,7 +66,7 @@ public class home_all extends AppCompatActivity
     private ImageButton buttonmeat;
     private ImageButton buttonvegetable;
     private ImageButton buttonother;
-    private static final String host_ip = "10.105.15.86";
+    private static final String host_ip = "10.105.27.105";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_meat_url = "http://" + host_ip + "/webapp/get_meat.php";
     private static final String get_vegetable_url = "http://" + host_ip + "/webapp/get_vegetablesandfruits.php";
@@ -81,8 +83,8 @@ public class home_all extends AppCompatActivity
     private String[] group_names, group_ids, join_leave_ids;
     private int mSelectedIndex;
     private String[] dialogitems = {"แก้ไขรายการ", "ลบรายการ"};
-    private String[] listindex;
-    private List<String> getfresh_list_id;
+    private String[] listindex, fresh_name_index, amount_index, unit_index, typename_index, exp_index;
+    private List<String> getfresh_list_id, getfresh_name, getamount, getunit, gettype_name, getexp;
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -129,7 +131,7 @@ public class home_all extends AppCompatActivity
             public void onClick(View view) {
                 String type = "getExpCalAvg";
                 BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
-                backgroundTask.execute(type);
+                backgroundTask.execute(type,"1");
             }
         });
 
@@ -181,6 +183,18 @@ public class home_all extends AppCompatActivity
         showmeat();
         showvegetableandfruit();
         showother();
+
+        /**snip *logout already clear all activity**/
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.package.ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("onReceive","Logout in progress");
+                //At this point you should start the login activity and finish this one
+                finish();
+            }
+        }, intentFilter);
 
     }
 
@@ -269,7 +283,7 @@ public class home_all extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
-        Log.i("getlog", "onCreateOptionsMenu");
+        //Log.i("getlog", "onCreateOptionsMenu");
         // ขยายเมนูให้แสดงใน action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
@@ -299,23 +313,23 @@ public class home_all extends AppCompatActivity
             case R.id.suggest:
                 Intent intent4 = new Intent(home_all.this, suggestlist_menu.class);
                 startActivity(intent4);
-                finish();
+                drawerLayout.closeDrawers();
+               // finish();
                 return true;
             case R.id.shopping:
                 Intent intent5 = new Intent(home_all.this, shoppinglist_menu.class);
                 startActivity(intent5);
-                finish();
+                drawerLayout.closeDrawers();
+             //   finish();
                 return true;
             case R.id.group:
                 Intent intent6 = new Intent(home_all.this, group_menu.class);
                 startActivity(intent6);
-                finish();
+                drawerLayout.closeDrawers();
+           //     finish();
                 return true;
             case R.id.exit:
                 Intent intent7 = new Intent(home_all.this, MainActivity.class);
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.clear();
-                editor.commit();
                 startActivity(intent7);
                 finish();
                 return true;
@@ -435,6 +449,11 @@ public class home_all extends AppCompatActivity
         freshList.clear();
         adapter.notifyDataSetChanged();
         getfresh_list_id = new ArrayList<String>();
+        getfresh_name = new ArrayList<String>();
+        getamount = new ArrayList<String>();
+        getunit = new ArrayList<String>();
+        gettype_name = new ArrayList<String>();
+        getexp = new ArrayList<String>();
         //---------------------List View--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Values_url + "?user_id=" + user_id + "&" + "group_id=", null, new Response.Listener<JSONObject>() {
@@ -460,6 +479,11 @@ public class home_all extends AppCompatActivity
                         String daysexe = (days + " วัน");
 
                         getfresh_list_id.add(jo.getString("fresh_list_id"));
+                        getfresh_name.add(jo.getString("fresh_name"));
+                        getamount.add(jo.getString("amount"));
+                        getunit.add(jo.getString("unit"));
+                        gettype_name.add(jo.getString("type_name"));
+                        getexp.add(jo.getString("exp"));
 
                         Fresh fresh = new Fresh();
                         fresh.setfresh_list_id(jo.getString("fresh_list_id"));
@@ -478,7 +502,12 @@ public class home_all extends AppCompatActivity
                     }
                     listView.setAdapter(adapter);
                     listindex = getfresh_list_id.toArray(new String[getfresh_list_id.size()]);
-                     Log.i("showitem","value is"+ Arrays.toString(listindex));
+                    fresh_name_index = getfresh_name.toArray(new String[getfresh_name.size()]);//----แก้ไขรายการ
+                    amount_index = getamount.toArray(new String[getamount.size()]);
+                    unit_index = getunit.toArray(new String[getunit.size()]);
+                    typename_index = gettype_name.toArray(new String[gettype_name.size()]);
+                    exp_index = getexp.toArray(new String[getexp.size()]);
+                    Log.i("showitem", "value is" + Arrays.toString(listindex));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -503,6 +532,11 @@ public class home_all extends AppCompatActivity
         freshList.clear();
         adapter.notifyDataSetChanged();
         getfresh_list_id = new ArrayList<String>();
+        getfresh_name = new ArrayList<String>();
+        getamount = new ArrayList<String>();
+        getunit = new ArrayList<String>();
+        gettype_name = new ArrayList<String>();
+        getexp = new ArrayList<String>();
         //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(home_all.this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Values_url + "?user_id=" + "&" + "group_id=" + group_id, null, new Response.Listener<JSONObject>() {
@@ -529,6 +563,11 @@ public class home_all extends AppCompatActivity
                         // System.out.println(days);
                         //  System.out.println(dateNow);
                         getfresh_list_id.add(jo.getString("fresh_list_id"));
+                        getfresh_name.add(jo.getString("fresh_name"));
+                        getamount.add(jo.getString("amount"));
+                        getunit.add(jo.getString("unit"));
+                        gettype_name.add(jo.getString("type_name"));
+                        getexp.add(jo.getString("exp"));
 
                         Fresh fresh = new Fresh();
                         fresh.setfresh_list_id(jo.getString("fresh_list_id"));
@@ -546,7 +585,12 @@ public class home_all extends AppCompatActivity
                     }
                     listView.setAdapter(adapter);
                     listindex = getfresh_list_id.toArray(new String[getfresh_list_id.size()]);
-                     Log.i("showitem","value is"+ Arrays.toString(listindex));
+                    fresh_name_index = getfresh_name.toArray(new String[getfresh_name.size()]);//----แก้ไขรายการ
+                    amount_index = getamount.toArray(new String[getamount.size()]);
+                    unit_index = getunit.toArray(new String[getunit.size()]);
+                    typename_index = gettype_name.toArray(new String[gettype_name.size()]);
+                    exp_index = getexp.toArray(new String[getexp.size()]);
+                   // Log.i("showitem", "value is" + Arrays.toString(listindex));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -682,7 +726,7 @@ public class home_all extends AppCompatActivity
 
     }
 
-    private void getdialogList(){
+    private void getdialogList() {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -693,9 +737,26 @@ public class home_all extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String selected = dialogitems[which];
-                        if(selected.equals("แก้ไขรายการ")){
-                        }
-                        else if(selected.equals("ลบรายการ")){
+                        if (selected.equals("แก้ไขรายการ")) {
+                            String ValFreshlistID = listindex[position];
+                            String ValFreshName = fresh_name_index[position];
+                            String ValAmount = amount_index[position];
+                            String Valunit = unit_index[position];
+                            String ValTypeName = typename_index[position];
+                            String Valexp = exp_index[position];
+                            Intent intent = new Intent(home_all.this, rectify.class);
+                            intent.putExtra("ValFreshlistID", ValFreshlistID);
+                            intent.putExtra("ValFreshName", ValFreshName);
+                            intent.putExtra("ValAmount", ValAmount);
+                            intent.putExtra("Valunit", Valunit);
+                            intent.putExtra("ValTypeName", ValTypeName);
+                            intent.putExtra("Valexp", Valexp);
+                            String getExpandCal = "getExpCalAvg";
+                            BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
+                            backgroundTask.execute(getExpandCal,"2");
+                            startActivity(intent);
+
+                        } else if (selected.equals("ลบรายการ")) {
 
                             AlertDialog.Builder builder =
                                     new AlertDialog.Builder(home_all.this);

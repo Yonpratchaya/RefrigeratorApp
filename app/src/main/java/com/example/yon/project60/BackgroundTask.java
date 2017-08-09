@@ -31,6 +31,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     Context ctx;
     AlertDialog alertDialog;
     SharedPreferences sharedpreferences;
+    String number;
 
 
     BackgroundTask(Context ctx) {
@@ -47,7 +48,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String host_ip = "10.105.15.86";
+        String host_ip = "10.105.27.105";
         String reg_url = "http://" + host_ip + "/webapp/register.php";
         String login_url = "http://" + host_ip + "/webapp/login.php";
         String Add_url = "http://" + host_ip + "/webapp/fresh_list.php";
@@ -56,6 +57,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         String joingroup_url = "http://" + host_ip + "/webapp/join_group.php";
         String leave_group_url = "http://" + host_ip + "/webapp/leave_group.php";
         String fresh_delete_url = "http://" + host_ip + "/webapp/fresh_list_delete.php";
+        String rectify_list_url = "http://" + host_ip + "/webapp/rectify_list.php";
 
         String type = params[0];
 
@@ -190,6 +192,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         }
         //---------------------------------------getExpAndCalAvg-----------------------------------------------
         else if (type.equals("getExpCalAvg")) {
+            number = params[1];
             try {
                 URL url = new URL(expandcal_url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -363,6 +366,59 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             }
 
         }
+        //----------------------------------------------------Rectify--------------------------------------------------------
+        else if (type.equals("rectify")) {
+            String user_id = params[1];
+            String group_id = params[2];
+            String valuefresh = params[3];
+            String Fresh_Name = params[4];
+            String Amount = params[5];
+            String S_Unit = params[6];
+            String S_Type_name = params[7];
+            String Exp = params[8];
+            String Calorie = params[9];
+
+
+            try {
+                URL url = new URL(rectify_list_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                        + URLEncoder.encode("group_id", "UTF-8") + "=" + URLEncoder.encode(group_id, "UTF-8") + "&"
+                        + URLEncoder.encode("valuefresh", "UTF-8") + "=" + URLEncoder.encode(valuefresh, "UTF-8") + "&"
+                        + URLEncoder.encode("Fresh_Name", "UTF-8") + "=" + URLEncoder.encode(Fresh_Name, "UTF-8") + "&"
+                        + URLEncoder.encode("Amount", "UTF-8") + "=" + URLEncoder.encode(Amount, "UTF-8") + "&"
+                        + URLEncoder.encode("S_Unit", "UTF-8") + "=" + URLEncoder.encode(S_Unit, "UTF-8") + "&"
+                        + URLEncoder.encode("S_Type_name", "UTF-8") + "=" + URLEncoder.encode(S_Type_name, "UTF-8") + "&"
+                        + URLEncoder.encode("Exp", "UTF-8") + "=" + URLEncoder.encode(Exp, "UTF-8") + "&"
+                        + URLEncoder.encode("Calorie", "UTF-8") + "=" + URLEncoder.encode(Calorie, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         return null;
     }
@@ -408,6 +464,13 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         }  else if (result.equals("ลบไม่สำเร็จ")) {//---DeleteFreshList
             alertDialog.setMessage(result);
             alertDialog.show();
+        } else if (result.equals("แก้ไขสำเร็จ")) {//---rectify
+            Intent intent = new Intent(ctx, home_all.class);
+            ctx.startActivity(intent);
+            ((Activity) ctx).finish();
+        }  else if (result.equals("แก้ไขไม่สำเร็จ")) {//---rectify
+            alertDialog.setMessage(result);
+            alertDialog.show();
         } else if (result.equals("addMenu Success....")) { //---AddMenu
             alertDialog.setMessage(result);
             alertDialog.setTitle("AddMenu Status");
@@ -428,7 +491,6 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             String calmeat = getexpandcal[3];
             String calvetg = getexpandcal[4];
             String calother = getexpandcal[5];
-            Intent intent = new Intent(ctx, add_menu.class);
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("expmeat", expmeat);
             editor.putString("expvetg", expvetg);
@@ -437,8 +499,11 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             editor.putString("calvetg", calvetg);
             editor.putString("calother", calother);
             editor.commit();
-            ctx.startActivity(intent);
-            ((Activity) ctx).finish();
+            if (number.equals("1")){
+                Intent intent = new Intent(ctx, add_menu.class);
+                ctx.startActivity(intent);
+            }else{
+            }
         } else { //---Login Success
             String[] getid = result.split(" ");
             String id = getid[1];
