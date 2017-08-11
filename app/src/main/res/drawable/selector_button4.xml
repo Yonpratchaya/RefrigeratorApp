@@ -4,15 +4,16 @@
     <item android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="3dp" />
-            <gradient android:angle="-90" android:endColor="@color/color1" android:startColor="@color/color1" />
+            <gradient android:angle="-90" android:endColor="@color/color7"
+                android:startColor="@color/color7"/>
         </shape>
-
     </item>
 
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="3dp" />
-            <gradient android:angle="-90" android:endColor="@color/color3" android:startColor="@color/color3" />
+            <gradient android:angle="-90" android:endColor="@color/color2"
+                android:startColor="@color/color2" />
         </shape>
     </item>
 

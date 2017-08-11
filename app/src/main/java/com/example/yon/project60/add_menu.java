@@ -68,6 +68,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.example.yon.project60.R.id.autocompleteadd;
+import static com.example.yon.project60.R.id.radioButton1;
 
 
 /**
@@ -399,7 +400,6 @@ public class add_menu extends AppCompatActivity
         String defaultdate = datethen.toString("yyyy-MM-dd");
         DateEtxt.setText(defaultdate);
         DateEtxt.setInputType(InputType.TYPE_NULL);
-        DateEtxt.requestFocus();
     }
 
     public void rbClick(View view) {
@@ -417,6 +417,7 @@ public class add_menu extends AppCompatActivity
                             if (v == DateEtxt) {
                                 DatePickerDialog.show();
                             }
+
                         }
                     });
 

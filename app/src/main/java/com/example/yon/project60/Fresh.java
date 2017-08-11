@@ -16,6 +16,9 @@ public class Fresh {
     private String unit;
     private String exp;
     private Bitmap picture;
+    private String shop_id;
+    private String shop_name;
+    private String status;
 
     public Fresh() {
     }
@@ -48,6 +51,12 @@ public class Fresh {
         return picture;
     }
 
+    public String getshop_id(){ return shop_id; }
+    public String getshop_name() {
+        return shop_name;
+    }
+    public String getstatus(){ return status; }
+
     //Setter
     public void setfresh_list_id(String fresh_list_id) {
         this.fresh_list_id = fresh_list_id;
@@ -66,6 +75,16 @@ public class Fresh {
     }
     public void setpicture(Bitmap picture) {
         this.picture = picture;
+    }
+
+    public void setshop_id(String shop_id) {
+        this.shop_id = shop_id;
+    }
+    public void setshop_name(String shop_name) {
+        this.shop_name = shop_name;
+    }
+    public void setstatus(String status) {
+        this.status = status;
     }
 
 }

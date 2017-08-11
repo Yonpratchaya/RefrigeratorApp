@@ -101,6 +101,7 @@
                         android:layout_weight="0"
                         android:ems="4"
                         android:hint="1,2,3..."
+                        android:inputType="numberDecimal"
                         android:maxLines="1" />
 
                     <Spinner
@@ -162,6 +163,7 @@
                             android:id="@+id/editTextdate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:focusable="false"
                             android:hint="yyyy-mm-dd" />
 
                         <TextView
