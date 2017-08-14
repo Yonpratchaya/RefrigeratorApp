@@ -114,9 +114,10 @@ public class add_menu extends AppCompatActivity
     private List<String> list;
     private List<String> listb;
     private List<String> listc;
-    String freshname ;
+    String freshname;
     AlertDialog alertDialog;
-    String shop_id,shop_name; //Comefrom Theadd of Shoppinglist
+    String shop_id, shop_name; //Comefrom Theadd of Shoppinglist
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,7 +127,7 @@ public class add_menu extends AppCompatActivity
         user_id = sharedpreferences.getString("user_id", null);
         join_leave_id = sharedpreferences.getString("join_leave_id", null);
         group_id = sharedpreferences.getString("group_id", null);
-        group_name = sharedpreferences.getString("group_name",null);
+        group_name = sharedpreferences.getString("group_name", null);
         ExpAvgMeat = sharedpreferences.getString("expmeat", null);
         ExpAvgVetg = sharedpreferences.getString("expvetg", null);
         ExpAvgOther = sharedpreferences.getString("expother", null);
@@ -139,12 +140,12 @@ public class add_menu extends AppCompatActivity
             shop_id = bundle.getString("shop_id");
             shop_name = bundle.getString("shop_name");
         }
-       // Log.i("valueis:",shop_id + " " + shop_name);
+        // Log.i("valueis:",shop_id + " " + shop_name);
         txtadd = (TextView) findViewById(R.id.text1);
-        if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
+        if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
             txtadd.setText("เพิ่มรายการ ตู้เย็นของฉัน");
-        }else{
-            txtadd.setText("เพิ่มรายการ "+ group_name);
+        } else {
+            txtadd.setText("เพิ่มรายการ " + group_name);
         }
         //Spinner
         spinner();
@@ -183,7 +184,7 @@ public class add_menu extends AppCompatActivity
         ET_EXP = (EditText) findViewById(R.id.editTextdate);
         UNIT = (Spinner) findViewById(R.id.spinner1);
         TYPENAME = (Spinner) findViewById(R.id.spinner2);
-        if(shop_id != null){
+        if (shop_id != null) {
             Autocomplete.setText(shop_name);
         }
         //---------------------เลือกวันหมดอายุจากฐานข้อมูลและแคลลอรี------------------------------//
@@ -299,12 +300,11 @@ public class add_menu extends AppCompatActivity
     }
 
     public void AddMenu(View view) {
-        if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
+        if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
             join_leave_id = "0";
             group_id = "0";
             addedmenu();
-        }
-        else {
+        } else {
             addedmenu();
         }
     }
@@ -454,25 +454,23 @@ public class add_menu extends AppCompatActivity
         typecheck = TYPENAME.getSelectedItem().toString();
 
         //------------------------------- ค้นหาชื่อใน get baseAdd เพื่อเอาวันหมดอายุของสดมาแสดง -------------------------------
-        for(int i =0; i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             if (aaa.equals(list.get(i))) {
                 avgdays = Integer.parseInt(listc.get(i));
                 Calorie = listb.get(i);
                 freshname = list.get(i);
                 break;
-            }
-            else{
+            } else {
                 freshname = null;
             }
         }
 
-        if (freshname != null){
+        if (freshname != null) {
             LocalDate datethen = dateNow.plusDays(avgdays);
             b = datethen.toString("yyyy-MM-dd");
 
-        }
-        else{
-            if(typecheck.equals("เนื้อ")) {
+        } else {
+            if (typecheck.equals("เนื้อ")) {
                 avgdays = Integer.parseInt(ExpAvgMeat);
                 LocalDate datethen = dateNow.plusDays(avgdays);
                 b = datethen.toString("yyyy-MM-dd");
@@ -543,7 +541,7 @@ public class add_menu extends AppCompatActivity
         return image;
     }
 
-    public void addedmenu(){
+    public void addedmenu() {
         //----------------CameraUpload-------------------------------
         if (mCurrentPhotoPath != null) {
             // Get the dimensions of the bitmap
@@ -589,14 +587,14 @@ public class add_menu extends AppCompatActivity
 
         String type = "addMenu";
         BackgroundTask backgroundTask = new BackgroundTask(this);
-        if(shop_id != null){
+        if (shop_id != null) {
             backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id, shop_id);
             String type2 = "DelShoppingList";
             BackgroundTask backgroundTask2 = new BackgroundTask(this);
             backgroundTask2.execute(type2, user_id, group_id, shop_id);
             setResult(RESULT_OK, null);
             finish();
-        }else{
+        } else {
             shop_id = "0";
             backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id, shop_id);
             Intent intent = new Intent(add_menu.this, home_all.class);

@@ -44,6 +44,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -75,6 +76,7 @@ public class home_all extends AppCompatActivity
     private static final String get_other_url = "http://" + host_ip + "/webapp/get_other.php";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
     private static final String get_expandcal_url = "http://" + host_ip + "/webapp/query_exp_cal.php";
+    private static final String get_search_url = "http://" + host_ip + "/webapp/get_search.php";
     private String Values_url = get_product_url;
 
     private String user_id, user_name, join_leave_id, group_id, group_name;
@@ -97,9 +99,7 @@ public class home_all extends AppCompatActivity
     List<Bitmap> bitmaps;
     int i;
 
-    private MenuItem mSearchAction;
-    private boolean isSearchOpened = false;
-    private AutoCompleteTextView edtSeach;
+    MaterialSearchView searchView;
     private String GetTextSearch, searchuser_id, searchgroup_id;
     int countvalue;
 
@@ -133,7 +133,7 @@ public class home_all extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(home_all.this,add_menu.class);
+                Intent intent = new Intent(home_all.this, add_menu.class);
                 startActivity(intent);
             }
         });
@@ -189,13 +189,47 @@ public class home_all extends AppCompatActivity
         showvegetableandfruit();
         showother();
 
+//-----------------------------SearchView---------------------------------------------------//
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                GetTextSearch = query;
+                search();
 
-    }
+                return false;
+            }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        mSearchAction = menu.findItem(R.id.action_search);
-        return super.onPrepareOptionsMenu(menu);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                // getAutocomplete();
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+                if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
+                    searchuser_id = user_id;
+                    searchgroup_id = "";
+                    getAutocomplete();//โหลดข้อมูลจากfreashlistมาค้นหา
+                } else {
+                    searchuser_id = "";
+                    searchgroup_id = group_id;
+                    getAutocomplete();//โหลดข้อมูลจากfreashlistมาค้นหา
+                }
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+
     }
 
     @Override
@@ -217,7 +251,7 @@ public class home_all extends AppCompatActivity
 
         switch (id) {
             case R.id.action_search:
-                handleMenuSearch();
+
                 return true;
             case R.id.action_find:
                 AlertDialog.Builder builder =
@@ -282,6 +316,9 @@ public class home_all extends AppCompatActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -308,19 +345,19 @@ public class home_all extends AppCompatActivity
                 Intent intent4 = new Intent(home_all.this, suggestlist_menu.class);
                 startActivity(intent4);
                 drawerLayout.closeDrawers();
-               // finish();
+                // finish();
                 return true;
             case R.id.shopping:
                 Intent intent5 = new Intent(home_all.this, shoppinglist_menu.class);
                 startActivity(intent5);
                 drawerLayout.closeDrawers();
-             //   finish();
+                //   finish();
                 return true;
             case R.id.group:
                 Intent intent6 = new Intent(home_all.this, group_menu.class);
                 startActivity(intent6);
                 drawerLayout.closeDrawers();
-           //     finish();
+                //     finish();
                 return true;
             case R.id.exit:
                 Intent intent7 = new Intent(home_all.this, MainActivity.class);
@@ -379,7 +416,8 @@ public class home_all extends AppCompatActivity
         });
         queue.add(jsonObjectRequest);
     }
-    private void getExpandCalAvg(){
+
+    private void getExpandCalAvg() {
         final List<String> Exp_list = new ArrayList<String>();
         final List<String> Cal_list = new ArrayList<String>();
         //---------------------GetExpandCalAvg------------------------------------------------------------
@@ -631,7 +669,7 @@ public class home_all extends AppCompatActivity
                     unit_index = getunit.toArray(new String[getunit.size()]);
                     typename_index = gettype_name.toArray(new String[gettype_name.size()]);
                     exp_index = getexp.toArray(new String[getexp.size()]);
-                   // Log.i("showitem", "value is" + Arrays.toString(listindex));
+                    // Log.i("showitem", "value is" + Arrays.toString(listindex));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -660,85 +698,12 @@ public class home_all extends AppCompatActivity
         mSelectedIndex = sharedpreferences.getInt("mSelectedIndex", 0);
     }
 
-    protected void handleMenuSearch() {
-        android.support.v7.app.ActionBar action = getSupportActionBar(); //get the actionbar
-
-        if (isSearchOpened) { //test if the search is open
-
-            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
-            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
-
-            //hides the keyboard
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-            //add the search icon in the action bar
-            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search));
-
-            isSearchOpened = false;
-        } else { //open the search entry
-
-            action.setDisplayShowCustomEnabled(true); //enable it to display a
-            // custom view in the action bar.
-            action.setCustomView(R.layout.search_bar);//add the custom view
-            action.setDisplayShowTitleEnabled(false); //hide the title
-
-            edtSeach = (AutoCompleteTextView) action.getCustomView().findViewById(R.id.edtSearch); //the text editor
-
-            //this is a listener to do a search when the user clicks on search button
-            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        doSearch();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-
-            edtSeach.requestFocus();
-
-            //open the keyboard focused in the edtSearch
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
-
-            if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
-                searchuser_id = user_id;
-                searchgroup_id = "";
-                getAutocomplete();//โหลดข้อมูลจากfreashlistมาค้นหา
-            } else {
-                searchuser_id = "";
-                searchgroup_id = group_id;
-                getAutocomplete();//โหลดข้อมูลจากfreashlistมาค้นหา
-            }
-
-
-            //add the close icon
-            mSearchAction.setIcon(getResources().getDrawable(R.mipmap.ic_close_white_24dp));
-
-            isSearchOpened = true;
-        }
-    }
-
     @Override
     public void onBackPressed() {
-        if (isSearchOpened) {
-            handleMenuSearch();
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    private void doSearch() {
-        GetTextSearch = edtSeach.getText().toString();
-        getAutocomplete();
-        freshList.clear();
-        adapter.notifyDataSetChanged();
-        listView.setAdapter(adapter);
-        if(countvalue == 0){
-            Toast.makeText(home_all.this,"ไม่มีรายการในตู้เย็น",Toast.LENGTH_LONG).show();
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -756,41 +721,83 @@ public class home_all extends AppCompatActivity
                         JSONObject jo = productArray.getJSONObject(i);
                         String a = jo.getString("fresh_name");
                         list.add(a);
-                        if(GetTextSearch != null){
-                            if(GetTextSearch.equals(jo.getString("fresh_name"))){
-
-                                byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
-                                String t = jo.getString("picture");
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);
-
-                                countvalue += 1;
-
-                                String datemenu = jo.getString("exp");
-                                LocalDate datemenu2 = LocalDate.parse(datemenu);
-                                LocalDate dateNow = LocalDate.now();
-                                int days = Days.daysBetween(dateNow, datemenu2).getDays();
-                                String daysexe = (days + " วัน");
-
-                                Fresh fresh = new Fresh();
-                                fresh.setfresh_list_id(jo.getString("fresh_list_id"));
-                                fresh.setfresh_name(jo.getString("fresh_name"));
-                                fresh.setamount(jo.getString("amount"));
-                                fresh.setunit(jo.getString("unit"));
-                                fresh.setpicture(bitmap);
-                                if (days <= 30) {
-                                    fresh.setexp(daysexe);
-                                } else
-                                    fresh.setexp(jo.getString("exp"));
-
-                                // adding movie to movies array
-                                freshList.add(fresh);
-                            }
-                        }
                     }
                     ///------------------------------Autoconplete-----------------------------
                     ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(home_all.this, android.R.layout.simple_dropdown_item_1line, list);
-                    AutoCompleteTextView autocomplete = (AutoCompleteTextView) home_all.this.findViewById(R.id.edtSearch);
-                    autocomplete.setAdapter(dataAdapter);
+                    MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
+                    searchView.setAdapter(dataAdapter);
+                   /* AutoCompleteTextView autocomplete = (AutoCompleteTextView) home_all.this.findViewById(R.id.edtSearch);
+                    autocomplete.setAdapter(dataAdapter);*/
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null && networkResponse.data != null) {
+                    String jsonError = new String(networkResponse.data);
+                    // Print Error!
+                }
+                Toast.makeText(home_all.this, error.toString(), Toast.LENGTH_LONG).show();
+            }
+
+        });
+        queue.add(jsonObjectRequest);
+
+    }
+
+    private void search() {
+        freshList.clear();
+        adapter.notifyDataSetChanged();
+        //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
+        RequestQueue queue = Volley.newRequestQueue(home_all.this);
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_search_url + "?user_id=" + searchuser_id + "&" + "group_id=" + searchgroup_id + "&" + "word_search=" + GetTextSearch, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
+                try {
+                    JSONArray productArray = response.getJSONArray("result");
+                    for (int i = 0; i < productArray.length(); i++) {
+                        JSONObject jo = productArray.getJSONObject(i);
+
+                        byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
+                        String t = jo.getString("picture");
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);
+
+                        countvalue += 1;
+
+                        String datemenu = jo.getString("exp");
+                        LocalDate datemenu2 = LocalDate.parse(datemenu);
+                        LocalDate dateNow = LocalDate.now();
+                        int days = Days.daysBetween(dateNow, datemenu2).getDays();
+                        String daysexe = (days + " วัน");
+
+                        Fresh fresh = new Fresh();
+                        fresh.setfresh_list_id(jo.getString("fresh_list_id"));
+                        fresh.setfresh_name(jo.getString("fresh_name"));
+                        fresh.setamount(jo.getString("amount"));
+                        fresh.setunit(jo.getString("unit"));
+                        fresh.setpicture(bitmap);
+                        if (days <= 30) {
+                            fresh.setexp(daysexe);
+                        } else
+                            fresh.setexp(jo.getString("exp"));
+
+                        // adding movie to movies array
+                        freshList.add(fresh);
+
+                    }
+                    // Show รายการที่ Search
+                    GetTextSearch = null;
+                    listView.setAdapter(adapter);
+                    if (countvalue == 0) {
+                        Toast.makeText(home_all.this, "ไม่มีรายการในตู้เย็น", Toast.LENGTH_LONG).show();
+                    }
+                    countvalue = 0;
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -867,7 +874,7 @@ public class home_all extends AppCompatActivity
                                 }
                             });
                             builder.show();
-                        } else if (selected.equals("เพิ่มเข้าชอปปิงลิสต์")){
+                        } else if (selected.equals("เพิ่มเข้าชอปปิงลิสต์")) {
                             String ValFreshName = fresh_name_index[position];
                             String type = "shoppinglist";
                             BackgroundTask backgroundTask = new BackgroundTask(home_all.this);

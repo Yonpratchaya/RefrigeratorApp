@@ -44,20 +44,20 @@ public class CustomAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-         ViewHolder holder;
+        ViewHolder holder;
         if (Inflater == null)
             Inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
             convertView = Inflater.inflate(R.layout.item, parent, false);
             holder = new ViewHolder();
-           // holder.Order = (TextView) convertView.findViewById(R.id.rowid);
+            // holder.Order = (TextView) convertView.findViewById(R.id.rowid);
             holder.Picture = (ImageView) convertView.findViewById(R.id.image_Layout);
             holder.Name = (TextView) convertView.findViewById(R.id.content);
             holder.Amount = (TextView) convertView.findViewById(R.id.content2);
             holder.Exp = (TextView) convertView.findViewById(R.id.content3);
             convertView.setTag(holder);
-        }else {
+        } else {
             //rebind widget
             holder = (ViewHolder) convertView.getTag();
         }
@@ -65,15 +65,16 @@ public class CustomAdapter extends BaseAdapter {
         // getting movie data for the row
         Fresh m = freshItems.get(position);
 
-       // holder.Order.setText(m.getfresh_list_id());
+        // holder.Order.setText(m.getfresh_list_id());
         holder.Name.setText(m.getfresh_name());
-        holder.Amount.setText(m.getamount()+m.getunit());
+        holder.Amount.setText(m.getamount() + m.getunit());
         holder.Exp.setText(m.getexp());
         holder.Picture.setImageBitmap(m.getpicture());
 
         return convertView;
     }
-    public class ViewHolder{
+
+    public class ViewHolder {
         TextView Order;
         ImageView Picture;
         TextView Name;

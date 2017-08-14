@@ -33,4 +33,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'net.danlew:android.joda:2.9.9'
     compile 'com.google.code.gson:gson:2.7'
+    compile 'com.miguelcatalan:materialsearchview:1.4.0'
 }

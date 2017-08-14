@@ -151,7 +151,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             String ba1 = params[6];
             String User_id = params[7];
             String Calorie = params[8];
-            String join_leave_id  = params[9];
+            String join_leave_id = params[9];
             String group_id = params[10];
             String shop_id = params[11];
 
@@ -585,29 +585,29 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             alertDialog.show();
         } else if (result.equals("ลบสำเร็จ")) {//---DeleteFreshList
 
-        }  else if (result.equals("ลบไม่สำเร็จ")) {//---DeleteFreshList
+        } else if (result.equals("ลบไม่สำเร็จ")) {//---DeleteFreshList
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("แก้ไขสำเร็จ")) {//---rectify
             Intent intent = new Intent(ctx, home_all.class);
             ctx.startActivity(intent);
             ((Activity) ctx).finish();
-        }  else if (result.equals("แก้ไขไม่สำเร็จ")) {//---rectify
+        } else if (result.equals("แก้ไขไม่สำเร็จ")) {//---rectify
             alertDialog.setMessage(result);
             alertDialog.show();
-        }  else if (result.equals("สำเร็จ")) {//---shoppinglist
+        } else if (result.equals("สำเร็จ")) {//---shoppinglist
             Toast.makeText(ctx, "เพิ่มรายการชอปปิงลิสต์สำเร็จ", Toast.LENGTH_LONG).show();
-        }  else if (result.equals("ไม่สำเร็จ")) {//---shoppinglist
+        } else if (result.equals("ไม่สำเร็จ")) {//---shoppinglist
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("ลบชอปปิงลิสต์สำเร็จ")) {//---Deleteshoppinglist
 
-        }  else if (result.equals("ลบชอปปิงลิสต์ไม่สำเร็จ")) {//---Deleteshoppinglist
+        } else if (result.equals("ลบชอปปิงลิสต์ไม่สำเร็จ")) {//---Deleteshoppinglist
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("อัพเดทสำเร็จ")) {//---UpdateStatusShoppinglist
 
-        }  else if (result.equals("อัพเดทไม่สำเร็จ")) {//---UpdateStatusShoppinglist
+        } else if (result.equals("อัพเดทไม่สำเร็จ")) {//---UpdateStatusShoppinglist
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("addMenu Success....")) { //---AddMenu
