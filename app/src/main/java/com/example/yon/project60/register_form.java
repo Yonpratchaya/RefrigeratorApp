@@ -31,7 +31,6 @@ public class register_form extends AppCompatActivity {
         String type = "register";
         BackgroundTask backgroundTask = new BackgroundTask(this);
         backgroundTask.execute(type,name,user_name,user_pass);
-      finish();
 
 
     }

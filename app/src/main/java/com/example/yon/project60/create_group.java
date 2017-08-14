@@ -153,7 +153,6 @@ public class create_group extends AppCompatActivity
             String type = "creategroup";
             BackgroundTask backgroundTask = new BackgroundTask(this);
             backgroundTask.execute(type,groupname,grouppass,user_name);
-            finish();
         }
 
 

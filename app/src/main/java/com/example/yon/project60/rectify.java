@@ -120,12 +120,12 @@ public class rectify extends AppCompatActivity
         join_leave_id = sharedpreferences.getString("join_leave_id", null);
         group_id = sharedpreferences.getString("group_id", null);
         group_name = sharedpreferences.getString("group_name",null);
-        ExpAvgMeat = sharedpreferences.getString("expmeat", "4");
-        ExpAvgVetg = sharedpreferences.getString("expvetg", "5");
-        ExpAvgOther = sharedpreferences.getString("expother", "24");
-        CalAvgMeat = sharedpreferences.getString("calmeat", "117");
-        CalAvgVetg = sharedpreferences.getString("calvetg", "65");
-        CalAvgOther = sharedpreferences.getString("calother", "142");
+        ExpAvgMeat = sharedpreferences.getString("expmeat", null);
+        ExpAvgVetg = sharedpreferences.getString("expvetg", null);
+        ExpAvgOther = sharedpreferences.getString("expother", null);
+        CalAvgMeat = sharedpreferences.getString("calmeat", null);
+        CalAvgVetg = sharedpreferences.getString("calvetg", null);
+        CalAvgOther = sharedpreferences.getString("calother", null);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -293,17 +293,7 @@ public class rectify extends AppCompatActivity
             }
         });
 
-        /**snip *logout already clear all activity**/
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.package.ACTION_LOGOUT");
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d("onReceive","Logout in progress");
-                //At this point you should start the login activity and finish this one
-                finish();
-            }
-        }, intentFilter);
+
     }
 
     public void spinner() {

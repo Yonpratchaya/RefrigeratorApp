@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.R.attr.action;
+
 
 public class home_all extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -72,6 +74,7 @@ public class home_all extends AppCompatActivity
     private static final String get_vegetable_url = "http://" + host_ip + "/webapp/get_vegetablesandfruits.php";
     private static final String get_other_url = "http://" + host_ip + "/webapp/get_other.php";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
+    private static final String get_expandcal_url = "http://" + host_ip + "/webapp/query_exp_cal.php";
     private String Values_url = get_product_url;
 
     private String user_id, user_name, join_leave_id, group_id, group_name;
@@ -82,7 +85,7 @@ public class home_all extends AppCompatActivity
     private String mSelected;
     private String[] group_names, group_ids, join_leave_ids;
     private int mSelectedIndex;
-    private String[] dialogitems = {"แก้ไขรายการ", "ลบรายการ"};
+    private String[] dialogitems = {"เพิ่มเข้าชอปปิงลิสต์", "แก้ไขรายการ", "ลบรายการ"};
     private String[] listindex, fresh_name_index, amount_index, unit_index, typename_index, exp_index;
     private List<String> getfresh_list_id, getfresh_name, getamount, getunit, gettype_name, getexp;
 
@@ -97,7 +100,8 @@ public class home_all extends AppCompatActivity
     private MenuItem mSearchAction;
     private boolean isSearchOpened = false;
     private AutoCompleteTextView edtSeach;
-
+    private String GetTextSearch, searchuser_id, searchgroup_id;
+    int countvalue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +133,8 @@ public class home_all extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String type = "getExpCalAvg";
-                BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
-                backgroundTask.execute(type,"1");
+                Intent intent = new Intent(home_all.this,add_menu.class);
+                startActivity(intent);
             }
         });
 
@@ -172,6 +175,8 @@ public class home_all extends AppCompatActivity
         getdialogList();
 //-----------------------------GetGroup----------------------------------------------------//
         getgroup();
+//-----------------------------GetExpandCalAvg----------------------------------------------------//
+        getExpandCalAvg();
 
 //-----------------------------ButtonsTypes-------------------------------------------------//
         buttonall = (ImageButton) findViewById(R.id.buall);
@@ -184,17 +189,6 @@ public class home_all extends AppCompatActivity
         showvegetableandfruit();
         showother();
 
-        /**snip *logout already clear all activity**/
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.package.ACTION_LOGOUT");
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d("onReceive","Logout in progress");
-                //At this point you should start the login activity and finish this one
-                finish();
-            }
-        }, intentFilter);
 
     }
 
@@ -366,6 +360,53 @@ public class home_all extends AppCompatActivity
                     group_names = group_list.toArray(new String[group_list.size()]);
                     group_ids = group_list2.toArray(new String[group_list2.size()]);
                     join_leave_ids = group_list3.toArray(new String[group_list3.size()]);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null && networkResponse.data != null) {
+                    String jsonError = new String(networkResponse.data);
+                    // Print Error!
+                }
+                Toast.makeText(home_all.this, error.toString(), Toast.LENGTH_LONG).show();
+            }
+
+        });
+        queue.add(jsonObjectRequest);
+    }
+    private void getExpandCalAvg(){
+        final List<String> Exp_list = new ArrayList<String>();
+        final List<String> Cal_list = new ArrayList<String>();
+        //---------------------GetExpandCalAvg------------------------------------------------------------
+        RequestQueue queue = Volley.newRequestQueue(this);
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_expandcal_url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
+                try {
+                    JSONArray productArray = response.getJSONArray("result");
+                    //Log.i("valueis:",productArray.toString(productArray.length()));
+                    // properties from the JSONObjects
+                    for (int i = 0; i < productArray.length(); i++) {
+                        JSONObject jo = productArray.getJSONObject(i);
+                        Exp_list.add(jo.getString("type_avg_exp"));
+                        Cal_list.add(jo.getString("type_avg_cal"));
+                    }
+                    String[] Exp_array = Exp_list.toArray(new String[Exp_list.size()]);
+                    String[] Cal_array = Cal_list.toArray(new String[Cal_list.size()]);
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putString("expmeat", Exp_array[0]);
+                    editor.putString("expvetg", Exp_array[1]);
+                    editor.putString("expother", Exp_array[2]);
+                    editor.putString("calmeat", Cal_array[0]);
+                    editor.putString("calvetg", Cal_array[1]);
+                    editor.putString("calother", Cal_array[2]);
+                    editor.commit();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -632,7 +673,7 @@ public class home_all extends AppCompatActivity
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
             //add the search icon in the action bar
-            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search_white_24dp));
+            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search));
 
             isSearchOpened = false;
         } else { //open the search entry
@@ -663,10 +704,19 @@ public class home_all extends AppCompatActivity
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
 
-            getAutocomplete();
+            if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
+                searchuser_id = user_id;
+                searchgroup_id = "";
+                getAutocomplete();//โหลดข้อมูลจากfreashlistมาค้นหา
+            } else {
+                searchuser_id = "";
+                searchgroup_id = group_id;
+                getAutocomplete();//โหลดข้อมูลจากfreashlistมาค้นหา
+            }
+
 
             //add the close icon
-            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_close_white_24dp));
+            mSearchAction.setIcon(getResources().getDrawable(R.mipmap.ic_close_white_24dp));
 
             isSearchOpened = true;
         }
@@ -682,14 +732,21 @@ public class home_all extends AppCompatActivity
     }
 
     private void doSearch() {
-
+        GetTextSearch = edtSeach.getText().toString();
+        getAutocomplete();
+        freshList.clear();
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
+        if(countvalue == 0){
+            Toast.makeText(home_all.this,"ไม่มีรายการในตู้เย็น",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void getAutocomplete() {
         final List<String> list = new ArrayList<String>();
         //---------------------List viwe--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(home_all.this);
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_product_url + "?user_id=" + user_id + "&" + "group_id=", null, new Response.Listener<JSONObject>() {
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_product_url + "?user_id=" + searchuser_id + "&" + "group_id=" + searchgroup_id, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
@@ -699,6 +756,36 @@ public class home_all extends AppCompatActivity
                         JSONObject jo = productArray.getJSONObject(i);
                         String a = jo.getString("fresh_name");
                         list.add(a);
+                        if(GetTextSearch != null){
+                            if(GetTextSearch.equals(jo.getString("fresh_name"))){
+
+                                byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
+                                String t = jo.getString("picture");
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);
+
+                                countvalue += 1;
+
+                                String datemenu = jo.getString("exp");
+                                LocalDate datemenu2 = LocalDate.parse(datemenu);
+                                LocalDate dateNow = LocalDate.now();
+                                int days = Days.daysBetween(dateNow, datemenu2).getDays();
+                                String daysexe = (days + " วัน");
+
+                                Fresh fresh = new Fresh();
+                                fresh.setfresh_list_id(jo.getString("fresh_list_id"));
+                                fresh.setfresh_name(jo.getString("fresh_name"));
+                                fresh.setamount(jo.getString("amount"));
+                                fresh.setunit(jo.getString("unit"));
+                                fresh.setpicture(bitmap);
+                                if (days <= 30) {
+                                    fresh.setexp(daysexe);
+                                } else
+                                    fresh.setexp(jo.getString("exp"));
+
+                                // adding movie to movies array
+                                freshList.add(fresh);
+                            }
+                        }
                     }
                     ///------------------------------Autoconplete-----------------------------
                     ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(home_all.this, android.R.layout.simple_dropdown_item_1line, list);
@@ -751,9 +838,6 @@ public class home_all extends AppCompatActivity
                             intent.putExtra("Valunit", Valunit);
                             intent.putExtra("ValTypeName", ValTypeName);
                             intent.putExtra("Valexp", Valexp);
-                            String getExpandCal = "getExpCalAvg";
-                            BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
-                            backgroundTask.execute(getExpandCal,"2");
                             startActivity(intent);
 
                         } else if (selected.equals("ลบรายการ")) {
@@ -783,6 +867,18 @@ public class home_all extends AppCompatActivity
                                 }
                             });
                             builder.show();
+                        } else if (selected.equals("เพิ่มเข้าชอปปิงลิสต์")){
+                            String ValFreshName = fresh_name_index[position];
+                            String type = "shoppinglist";
+                            BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
+                            if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
+                                group_id = "0";
+                                backgroundTask.execute(type, ValFreshName, "0", user_id, group_id);
+                                showItemMyself();
+                            } else {
+                                backgroundTask.execute(type, ValFreshName, "0", user_id, group_id);
+                                showItemGroup();
+                            }
                         }
 
                     }

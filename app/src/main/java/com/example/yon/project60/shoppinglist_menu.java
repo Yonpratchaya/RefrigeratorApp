@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -66,8 +67,6 @@ public class shoppinglist_menu extends AppCompatActivity
     private ListView listView;
     private CustomAdapter2 adapter;
 
-    private String[] shop_id_index, status_index;
-    private List<String> getshop_id, getstatus;
     private TextView txtlist;
 
     private String mSelected;
@@ -90,8 +89,10 @@ public class shoppinglist_menu extends AppCompatActivity
         setTitle("Shopping List");
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
-        group_id = sharedpreferences.getString("group_id", "0");
+        group_id = sharedpreferences.getString("group_id", null);
         group_name = sharedpreferences.getString("group_name",null);
+        mSelected = sharedpreferences.getString("group_name", "ตู้เย็นของฉัน");
+        mSelectedIndex = sharedpreferences.getInt("mSelectedIndex", 0);
 
         txtlist = (TextView) findViewById(R.id.text1);
         if(group_name == null || group_name.equals("ตู้เย็นของฉัน")){
@@ -114,7 +115,7 @@ public class shoppinglist_menu extends AppCompatActivity
 
                 final EditText list = (EditText) views.findViewById(R.id.edtlist);
 
-                builder.setMessage("เพิ่มส่วนผสมไปยังชอปปิงลิสต์");
+                builder.setMessage("เพิ่มรายการไปยังชอปปิงลิสต์");
                 builder.setPositiveButton("ตกลง", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -122,12 +123,16 @@ public class shoppinglist_menu extends AppCompatActivity
                         status = "0";
                         String type = "shoppinglist";
                         BackgroundTask backgroundTask = new BackgroundTask(shoppinglist_menu.this);
-                        backgroundTask.execute(type, namelist, status, user_id, group_id);
                         if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
+                            group_id = "0";
+                            backgroundTask.execute(type, namelist, status, user_id, group_id);
                             showShoppingListMyself();
                         } else {
+                            backgroundTask.execute(type, namelist, status, user_id, group_id);
                             showShoppingListGroup();
                         }
+                        dialog.dismiss();
+                      // recreate();
                     }
                 });
                 builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
@@ -164,24 +169,11 @@ public class shoppinglist_menu extends AppCompatActivity
         } else {
             showShoppingListGroup();
         }
-
 //-----------------------------GetGroup----------------------------------------------------//
         getgroup();
 
 
 
-
-        /**snip *logout already clear all activity**/
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.package.ACTION_LOGOUT");
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d("onReceive", "Logout in progress");
-                //At this point you should start the login activity and finish this one
-                finish();
-            }
-        }, intentFilter);
 
     }
 
@@ -364,8 +356,6 @@ public class shoppinglist_menu extends AppCompatActivity
     public void showShoppingListMyself() {
         freshList.clear();
         adapter.notifyDataSetChanged();
-        getshop_id = new ArrayList<String>();
-        getstatus = new ArrayList<String>();
         //---------------------List View--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Values_url + "?user_id=" + user_id + "&" + "group_id=", null, new Response.Listener<JSONObject>() {
@@ -379,9 +369,6 @@ public class shoppinglist_menu extends AppCompatActivity
                     for (int i = 0; i < productArray.length(); i++) {
                         JSONObject jo = productArray.getJSONObject(i);
 
-                        getshop_id.add(jo.getString("shop_id"));
-                        getstatus.add(jo.getString("status"));
-
                         Fresh fresh = new Fresh();
                         fresh.setshop_id(jo.getString("shop_id"));
                         fresh.setshop_name(jo.getString("shop_name"));
@@ -392,11 +379,7 @@ public class shoppinglist_menu extends AppCompatActivity
 
                     }
                     listView.setAdapter(adapter);
-                    shop_id_index = getshop_id.toArray(new String[getshop_id.size()]);
-                    status_index = getstatus.toArray(new String[getstatus.size()]);
 
-
-                    Log.i("showitem", "value is" + Arrays.toString(shop_id_index));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -419,8 +402,6 @@ public class shoppinglist_menu extends AppCompatActivity
     public void showShoppingListGroup(){
         freshList.clear();
         adapter.notifyDataSetChanged();
-        getshop_id = new ArrayList<String>();
-        getstatus = new ArrayList<String>();
         //---------------------List View--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Values_url + "?user_id=" + "&" + "group_id=" + group_id, null, new Response.Listener<JSONObject>() {
@@ -434,9 +415,6 @@ public class shoppinglist_menu extends AppCompatActivity
                     for (int i = 0; i < productArray.length(); i++) {
                         JSONObject jo = productArray.getJSONObject(i);
 
-                        getshop_id.add(jo.getString("shop_id"));
-                        getstatus.add(jo.getString("status"));
-
                         Fresh fresh = new Fresh();
                         fresh.setshop_id(jo.getString("shop_id"));
                         fresh.setshop_name(jo.getString("shop_name"));
@@ -447,10 +425,7 @@ public class shoppinglist_menu extends AppCompatActivity
 
                     }
                     listView.setAdapter(adapter);
-                    shop_id_index = getshop_id.toArray(new String[getshop_id.size()]);
-                    status_index = getstatus.toArray(new String[getstatus.size()]);
 
-                    Log.i("showitem", "value is" + Arrays.toString(shop_id_index));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -469,5 +444,16 @@ public class shoppinglist_menu extends AppCompatActivity
 
         });
         queue.add(jsonObjectRequest);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            Intent refresh = new Intent(this, shoppinglist_menu.class);
+            Toast.makeText(this,"เพิ่มไปยังรายการของสดเสร็จสิ้น".toString(),Toast.LENGTH_LONG).show();
+            startActivity(refresh);
+            this.finish();
+        }
     }
 }

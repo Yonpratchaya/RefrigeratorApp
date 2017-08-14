@@ -29,7 +29,7 @@
             android:layout_gravity="center"
             android:layout_weight="1.5"
             android:background="@drawable/selector_button4"
-            android:src="@drawable/ic_close_black_24dp" />
+            android:src="@drawable/ic_close" />
 
         <Button
             android:id="@+id/buttonToadd"
