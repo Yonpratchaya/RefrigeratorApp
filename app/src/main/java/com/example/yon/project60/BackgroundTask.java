@@ -31,7 +31,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     Context ctx;
     AlertDialog alertDialog;
     SharedPreferences sharedpreferences;
-
+    String Message;
     BackgroundTask(Context ctx) {
         this.ctx = ctx;
     }
@@ -58,6 +58,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         String shopping_list_url = "http://" + host_ip + "/webapp/shopping_list.php";
         String shopping_delete_url = "http://" + host_ip + "/webapp/shopping_list_delete.php";
         String shopping_update_url = "http://" + host_ip + "/webapp/shopping_list_update.php";
+        String freshlist_update_url = "http://" + host_ip + "/webapp/fresh_list_update.php";
 
         String type = params[0];
 
@@ -137,6 +138,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+                Message = e.getMessage();
+                String result = "กรุณาเชื่อมต่ออินเตอร์เน็ต";
+                return result;
             }
 
         }
@@ -537,6 +541,48 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             }
 
         }
+        //----------------------------------------------------UpdateStatusFreshlist--------------------------------------------------------
+        else if (type.equals("updatestatus_freshlist")) {
+            String user_id = params[1];
+            String group_id = params[2];
+            String valuefresh_list_id = params[3];
+            String statusvalue = params[4];
+
+            try {
+                URL url = new URL(freshlist_update_url);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setDoInput(true);
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String post_data = URLEncoder.encode("user_id", "UTF-8") + "=" + URLEncoder.encode(user_id, "UTF-8") + "&"
+                        + URLEncoder.encode("group_id", "UTF-8") + "=" + URLEncoder.encode(group_id, "UTF-8") + "&"
+                        + URLEncoder.encode("valuefresh_list_id", "UTF-8") + "=" + URLEncoder.encode(valuefresh_list_id, "UTF-8") + "&"
+                        + URLEncoder.encode("menu_statusvalue", "UTF-8") + "=" + URLEncoder.encode(statusvalue, "UTF-8");
+                bufferedWriter.write(post_data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String result = "";
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                return result;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         return null;
     }
@@ -610,6 +656,11 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
         } else if (result.equals("อัพเดทไม่สำเร็จ")) {//---UpdateStatusShoppinglist
             alertDialog.setMessage(result);
             alertDialog.show();
+        } else if (result.equals("อัพเดทเฟรชลิสต์สำเร็จ")) {//---UpdateStatusFreshlist
+
+        } else if (result.equals("อัพเดทเฟรชลิสต์ไม่สำเร็จ")) {//---UpdateStatusFreshlist
+            alertDialog.setMessage(result);
+            alertDialog.show();
         } else if (result.equals("addMenu Success....")) { //---AddMenu
             alertDialog.setMessage(result);
             alertDialog.setTitle("AddMenu Status");
@@ -617,6 +668,10 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
         } else if (result.equals("login 0")) { //---Login False
             alertDialog.setMessage(result);
+            alertDialog.show();
+
+        } else if (result.equals("กรุณาเชื่อมต่ออินเตอร์เน็ต")) { //---Connection Database False!!!
+            alertDialog.setMessage(result+"\n"+Message);
             alertDialog.show();
 
         } else { //---Login Success
@@ -639,6 +694,9 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
 
 
     }
-
+    public void displayExceptionMessage(String msg)
+    {
+        Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+    }
 
 }

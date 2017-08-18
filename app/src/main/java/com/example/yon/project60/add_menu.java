@@ -310,6 +310,16 @@ public class add_menu extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     protected void onPostCreate(@Nullable Bundle saveInstanceState) {
         super.onPostCreate(saveInstanceState);
         actionBarDrawerToggle.syncState();

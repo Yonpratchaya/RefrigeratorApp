@@ -16,6 +16,8 @@ public class Fresh {
     private String unit;
     private String exp;
     private Bitmap picture;
+    private String cal;
+    private String menu_status;
     private String shop_id;
     private String shop_name;
     private String status;
@@ -50,6 +52,12 @@ public class Fresh {
     public Bitmap getpicture() {
         return picture;
     }
+    public String getcal() {
+        return cal;
+    }
+    public String getmenu_status() {
+        return menu_status;
+    }
 
     public String getshop_id(){ return shop_id; }
     public String getshop_name() {
@@ -75,6 +83,12 @@ public class Fresh {
     }
     public void setpicture(Bitmap picture) {
         this.picture = picture;
+    }
+    public void setcal(String cal) {
+        this.cal = cal;
+    }
+    public void setmenu_status(String menu_status) {
+        this.menu_status = menu_status;
     }
 
     public void setshop_id(String shop_id) {

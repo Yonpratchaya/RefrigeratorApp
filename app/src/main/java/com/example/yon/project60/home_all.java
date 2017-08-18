@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -99,6 +101,7 @@ public class home_all extends AppCompatActivity
     List<Bitmap> bitmaps;
     int i;
 
+    ArrayAdapter<String> dataAdapter;
     MaterialSearchView searchView;
     private String GetTextSearch, searchuser_id, searchgroup_id;
     int countvalue;
@@ -204,7 +207,12 @@ public class home_all extends AppCompatActivity
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
-                // getAutocomplete();
+                if(newText.equals("")) {
+                    searchView.setAdapter(null);
+                }
+                else{
+                    searchView.setAdapter(dataAdapter);
+                    }
                 return false;
             }
         });
@@ -227,6 +235,15 @@ public class home_all extends AppCompatActivity
             @Override
             public void onSearchViewClosed() {
                 //Do some magic
+            }
+        });
+
+        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(home_all.this, parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+                searchView.setQuery(parent.getItemAtPosition(position).toString(), false);
+                searchView.setAdapter(null);
             }
         });
 
@@ -569,6 +586,7 @@ public class home_all extends AppCompatActivity
                         fresh.setfresh_name(jo.getString("fresh_name"));
                         fresh.setamount(jo.getString("amount"));
                         fresh.setunit(jo.getString("unit"));
+                        fresh.setcal(jo.getString("calories"));
                         fresh.setpicture(bitmap);
                         if (days <= 30) {
                             fresh.setexp(daysexe);
@@ -653,6 +671,7 @@ public class home_all extends AppCompatActivity
                         fresh.setfresh_name(jo.getString("fresh_name"));
                         fresh.setamount(jo.getString("amount"));
                         fresh.setunit(jo.getString("unit"));
+                        fresh.setcal(jo.getString("calories"));
                         fresh.setpicture(bitmap);
                         if (days <= 30) {
                             fresh.setexp(daysexe);
@@ -700,9 +719,14 @@ public class home_all extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (searchView.isSearchOpen()) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else if (searchView.isSearchOpen()) {
             searchView.closeSearch();
-        } else {
+        }
+        else {
             super.onBackPressed();
         }
     }
@@ -723,9 +747,10 @@ public class home_all extends AppCompatActivity
                         list.add(a);
                     }
                     ///------------------------------Autoconplete-----------------------------
-                    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(home_all.this, android.R.layout.simple_dropdown_item_1line, list);
-                    MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
-                    searchView.setAdapter(dataAdapter);
+                    dataAdapter = new ArrayAdapter<String>(home_all.this, android.R.layout.simple_dropdown_item_1line, list);
+                   /* MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
+                    searchView.setAdapter(dataAdapter);*/
+
                    /* AutoCompleteTextView autocomplete = (AutoCompleteTextView) home_all.this.findViewById(R.id.edtSearch);
                     autocomplete.setAdapter(dataAdapter);*/
 
@@ -780,6 +805,7 @@ public class home_all extends AppCompatActivity
                         fresh.setfresh_name(jo.getString("fresh_name"));
                         fresh.setamount(jo.getString("amount"));
                         fresh.setunit(jo.getString("unit"));
+                        fresh.setcal(jo.getString("calories"));
                         fresh.setpicture(bitmap);
                         if (days <= 30) {
                             fresh.setexp(daysexe);
@@ -860,7 +886,16 @@ public class home_all extends AppCompatActivity
                                     if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
                                         group_id = "0";
                                         backgroundTask.execute(type, user_id, group_id, ValFreshlistID);
-                                        showItemMyself();
+                                        //---Delay Time Before ShowItem
+                                        final Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                // Do something after 5s = 5000ms
+                                                showItemMyself();
+                                            }
+                                        }, 250);
+
                                     } else {
                                         backgroundTask.execute(type, user_id, group_id, ValFreshlistID);
                                         showItemGroup();

@@ -12,17 +12,17 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Created by Yon on 30/6/2560.
+ * Created by Yon on 18/8/2560.
  */
 
-public class CustomAdapter extends BaseAdapter {
+public class CustomAdapter4 extends BaseAdapter {
 
 
     private Activity activity;
     private LayoutInflater Inflater;
     private List<Fresh> freshItems;
 
-    public CustomAdapter(Activity activity, List<Fresh> freshItems) {
+    public CustomAdapter4(Activity activity, List<Fresh> freshItems) {
         this.activity = activity;
         this.freshItems = freshItems;
     }
@@ -44,42 +44,37 @@ public class CustomAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        CustomAdapter4.ViewHolder holder;
         if (Inflater == null)
             Inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
-            convertView = Inflater.inflate(R.layout.item, parent, false);
-            holder = new ViewHolder();
+            convertView = Inflater.inflate(R.layout.item4, parent, false);
+            holder = new CustomAdapter4.ViewHolder();
             // holder.Order = (TextView) convertView.findViewById(R.id.rowid);
             holder.Picture = (ImageView) convertView.findViewById(R.id.image_Layout);
             holder.Name = (TextView) convertView.findViewById(R.id.content);
-            holder.Amount = (TextView) convertView.findViewById(R.id.content2);
-            holder.Exp = (TextView) convertView.findViewById(R.id.content3);
+            holder.Name2 = (TextView) convertView.findViewById(R.id.content2);
             convertView.setTag(holder);
         } else {
             //rebind widget
-            holder = (ViewHolder) convertView.getTag();
+            holder = (CustomAdapter4.ViewHolder) convertView.getTag();
         }
 
         // getting movie data for the row
         Fresh m = freshItems.get(position);
 
-        // holder.Order.setText(m.getfresh_list_id());
-        holder.Name.setText(m.getfresh_name());
-        holder.Amount.setText(m.getamount() + m.getunit()+"\n"+m.getcal()+"แคลต่อ100กรัม");
-        holder.Exp.setText(m.getexp());
         holder.Picture.setImageBitmap(m.getpicture());
+        holder.Name.setText(m.getfresh_name());
+        holder.Name2.setText(m.getfresh_name());
 
         return convertView;
     }
 
     public class ViewHolder {
-        TextView Order;
         ImageView Picture;
         TextView Name;
-        TextView Amount;
-        TextView Exp;
+        TextView Name2;
+
     }
 }
-
