@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,7 +57,7 @@ public class suggestlist_menu2 extends AppCompatActivity
     private static final String host_ip = "10.105.27.105";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
-    private static final String get_test_url = "http://" + host_ip + "/webapp/test.php";
+    private static final String suggest_list = "http://" + host_ip + "/webapp/suggest_list.php";
 
     private TextView txtlist;
     private String mSelected;
@@ -62,6 +65,7 @@ public class suggestlist_menu2 extends AppCompatActivity
     private int mSelectedIndex;
     private Menu menu;
 
+    private String fresh_nametrue = "";
     private String[] fresh_name,menu_status;
     private List<String> getfresh_name,getfreshlist_status;
 
@@ -77,10 +81,10 @@ public class suggestlist_menu2 extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.suggestlist_menu);
+        setContentView(R.layout.suggestlist_menu2);
         listView = (ListView) findViewById(R.id.list4);
         adapter = new CustomAdapter4(this, freshList);
-     //   listView.setAdapter(adapter);
+        listView.setAdapter(adapter);
 
         sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
         user_id = sharedpreferences.getString("user_id", null);
@@ -92,13 +96,14 @@ public class suggestlist_menu2 extends AppCompatActivity
         if (bundle != null) {
             fresh_name = bundle.getStringArray("freshname");
         }
-        if (fresh_name!=null){
+        if (fresh_name!=null) {
             for (int i = 0; i < fresh_name.length; i++) {
-                Log.i("valueis:", fresh_name[i]);
+                fresh_nametrue += fresh_name[i];
             }
+            //Log.i("valueis:", fresh_nametrue);
         }
 
-        txtlist = (TextView) findViewById(R.id.suggest_txt);
+        txtlist = (TextView) findViewById(R.id.suggest2_txt);
         txtlist.setText("เมนูอาหาร");
         setTitle(mSelected);// setTitle
 
@@ -120,12 +125,7 @@ public class suggestlist_menu2 extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 //-----------------------------ShowItemListView--------------------------------------------//
-        if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
-            //showSuggestlist_Myself();
-        } else {
-            setTitle(group_name);
-            //showItemGroup();
-        }
+        showSuggestlist_Myself();
 
 
 
@@ -197,7 +197,7 @@ public class suggestlist_menu2 extends AppCompatActivity
         adapter.notifyDataSetChanged();
         //---------------------List View--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(this);
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_test_url + "?user_id=" + user_id + "&" + "group_id=", null, new Response.Listener<JSONObject>() {
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, suggest_list + "?fresh_name=" + fresh_nametrue, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
@@ -234,9 +234,18 @@ public class suggestlist_menu2 extends AppCompatActivity
                         // adding movie to movies array
                         freshList.add(fresh);*/
 
+                       /* byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);*/
+
+                        Fresh fresh = new Fresh();
+                       // fresh.setpic_menu(bitmap);
+                        fresh.settitle_menu(jo.getString("title1"));
+                        fresh.seturl_menu(jo.getString("urll"));
+
+                        freshList.add(fresh);
                     }
-                    /*listView.setAdapter(adapter);
-                    Log.i("showitem", "value is");*/
+                    listView.setAdapter(adapter);
+                    //Log.i("showitem", "value is");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -251,13 +260,11 @@ public class suggestlist_menu2 extends AppCompatActivity
                     // Print Error!
                 }
                 Toast.makeText(suggestlist_menu2.this, error.toString(), Toast.LENGTH_LONG).show();
+
             }
 
         });
         queue.add(jsonObjectRequest);
     }
 
-    private void showItemGroup(){
-
-    }
 }

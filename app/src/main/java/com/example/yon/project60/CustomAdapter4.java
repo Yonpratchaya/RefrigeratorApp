@@ -64,9 +64,9 @@ public class CustomAdapter4 extends BaseAdapter {
         // getting movie data for the row
         Fresh m = freshItems.get(position);
 
-        holder.Picture.setImageBitmap(m.getpicture());
-        holder.Name.setText(m.getfresh_name());
-        holder.Name2.setText(m.getfresh_name());
+       // holder.Picture.setImageBitmap(m.getpic_menu());
+        holder.Name.setText(m.gettitle_menu());
+        holder.Name2.setText(m.geturl_menu());
 
         return convertView;
     }

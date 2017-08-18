@@ -22,6 +22,10 @@ public class Fresh {
     private String shop_name;
     private String status;
 
+    private Bitmap pic_menu;
+    private String title_menu;
+    private String url_menu;
+
     public Fresh() {
     }
 
@@ -65,6 +69,16 @@ public class Fresh {
     }
     public String getstatus(){ return status; }
 
+    public Bitmap getpic_menu() {
+        return pic_menu;
+    }
+    public String gettitle_menu() {
+        return title_menu;
+    }
+    public String geturl_menu() {
+        return url_menu;
+    }
+
     //Setter
     public void setfresh_list_id(String fresh_list_id) {
         this.fresh_list_id = fresh_list_id;
@@ -99,6 +113,16 @@ public class Fresh {
     }
     public void setstatus(String status) {
         this.status = status;
+    }
+
+    public void setpic_menu(Bitmap pic_menu) {
+        this.pic_menu = pic_menu;
+    }
+    public void settitle_menu(String title_menu) {
+        this.title_menu = title_menu;
+    }
+    public void seturl_menu(String url_menu) {
+        this.url_menu = url_menu;
     }
 
 }

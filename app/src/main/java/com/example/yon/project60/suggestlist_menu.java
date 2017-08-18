@@ -99,7 +99,7 @@ public class suggestlist_menu extends AppCompatActivity
                 for (int i = 0; i < freshList.size(); i++) {
                     Fresh m = freshList.get(i);
                     if (m.getmenu_status().equals("1")) {
-                        getfresh_name.add(m.getfresh_name());
+                        getfresh_name.add(m.getfresh_name()+",");
                         getfreshlist_status.add(m.getmenu_status());
                     }
                 }
