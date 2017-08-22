@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -22,7 +23,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,11 +37,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +63,7 @@ public class suggestlist_menu2 extends AppCompatActivity
     private ListView listView;
     private CustomAdapter4 adapter;
 
-    private static final String host_ip = "10.105.27.105";
+    private static final String host_ip = "10.105.6.110";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
     private static final String suggest_list = "http://" + host_ip + "/webapp/suggest_list.php";
@@ -65,18 +74,13 @@ public class suggestlist_menu2 extends AppCompatActivity
     private int mSelectedIndex;
     private Menu menu;
 
-    private String fresh_nametrue = "";
-    private String[] fresh_name,menu_status;
+    private String fresh_nametrue = "",url_menu;
+    private String[] fresh_name;
     private List<String> getfresh_name,getfreshlist_status;
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
-
-    ArrayAdapter<String> dataAdapter;
-    private String GetTextSearch, searchuser_id, searchgroup_id;
-    int countvalue;
-    private String[] listindex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +130,16 @@ public class suggestlist_menu2 extends AppCompatActivity
 
 //-----------------------------ShowItemListView--------------------------------------------//
         showSuggestlist_Myself();
-
-
-
+//-----------------------------Showเว็ปไซด์ทำอาหาร--------------------------------------------//
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fresh m = freshList.get(position);
+                url_menu = m.geturl_menu();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url_menu));
+                startActivity(browserIntent);
+            }
+        });
     }
 
     @Override
@@ -179,6 +190,15 @@ public class suggestlist_menu2 extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // เก็บค่า id ของปุ่ม action butoon ที่กดเลือก
+
+        if (actionBarDrawerToggle.onOptionsItemSelected(item))
+            return true;
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onPostCreate(@Nullable Bundle saveInstanceState) {
@@ -208,37 +228,11 @@ public class suggestlist_menu2 extends AppCompatActivity
                     for (int i = 0; i < productArray.length(); i++) {
                         JSONObject jo = productArray.getJSONObject(i);
 
-                   /*     byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
-                        String t = jo.getString("picture");
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);
-
-
-                        String datemenu = jo.getString("exp");
-                        LocalDate datemenu2 = LocalDate.parse(datemenu);
-                        LocalDate dateNow = LocalDate.now();
-                        int days = Days.daysBetween(dateNow, datemenu2).getDays();
-                        String daysexe = (days + " วัน");
-
-                        Fresh fresh = new Fresh();
-                        fresh.setfresh_list_id(jo.getString("fresh_list_id"));
-                        fresh.setfresh_name(jo.getString("fresh_name"));
-                        fresh.setamount(jo.getString("amount"));
-                        fresh.setunit(jo.getString("unit"));
-                        fresh.setcal(jo.getString("calories"));
-                        fresh.setpicture(bitmap);
-                        if (days <= 30) {
-                            fresh.setexp(daysexe);
-                        } else
-                            fresh.setexp(jo.getString("exp"));
-
-                        // adding movie to movies array
-                        freshList.add(fresh);*/
-
                        /* byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
                         Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);*/
 
                         Fresh fresh = new Fresh();
-                       // fresh.setpic_menu(bitmap);
+                        fresh.setpic_menu(jo.getString("picture"));
                         fresh.settitle_menu(jo.getString("title1"));
                         fresh.seturl_menu(jo.getString("urll"));
 
@@ -248,7 +242,11 @@ public class suggestlist_menu2 extends AppCompatActivity
                     //Log.i("showitem", "value is");
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                } /*catch (MalformedURLException e){
+                    e.printStackTrace();
+                } catch (IOException e){
+                    e.printStackTrace();
+                }*/
 
             }
         }, new Response.ErrorListener() {

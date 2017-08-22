@@ -61,6 +61,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
@@ -68,6 +69,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.example.yon.project60.R.id.autocompleteadd;
+import static com.example.yon.project60.R.id.imagepicture;
 import static com.example.yon.project60.R.id.radioButton1;
 
 
@@ -105,7 +107,7 @@ public class add_menu extends AppCompatActivity
     String ba1;
     String mCurrentPhotoPath;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    private static final String host_ip = "10.105.27.105";
+    private static final String host_ip = "10.105.6.110";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
 
     // Autocomplete

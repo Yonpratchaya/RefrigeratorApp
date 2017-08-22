@@ -22,7 +22,7 @@ public class Fresh {
     private String shop_name;
     private String status;
 
-    private Bitmap pic_menu;
+    private String pic_menu;
     private String title_menu;
     private String url_menu;
 
@@ -69,7 +69,7 @@ public class Fresh {
     }
     public String getstatus(){ return status; }
 
-    public Bitmap getpic_menu() {
+    public String getpic_menu() {
         return pic_menu;
     }
     public String gettitle_menu() {
@@ -115,7 +115,7 @@ public class Fresh {
         this.status = status;
     }
 
-    public void setpic_menu(Bitmap pic_menu) {
+    public void setpic_menu(String pic_menu) {
         this.pic_menu = pic_menu;
     }
     public void settitle_menu(String title_menu) {

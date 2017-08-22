@@ -34,4 +34,5 @@ dependencies {
     compile 'net.danlew:android.joda:2.9.9'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

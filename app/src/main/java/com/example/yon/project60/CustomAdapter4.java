@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -64,9 +66,10 @@ public class CustomAdapter4 extends BaseAdapter {
         // getting movie data for the row
         Fresh m = freshItems.get(position);
 
-       // holder.Picture.setImageBitmap(m.getpic_menu());
+        //holder.Picture.setImageBitmap(m.getpic_menu());
+        Picasso.with(activity).load(m.getpic_menu()).resize(300, 160).centerCrop().into(holder.Picture);
         holder.Name.setText(m.gettitle_menu());
-        holder.Name2.setText(m.geturl_menu());
+       // holder.Name2.setText(m.geturl_menu());
 
         return convertView;
     }
