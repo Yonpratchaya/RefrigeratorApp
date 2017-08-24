@@ -133,6 +133,10 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
+                String[] getmessage = result.split(" ");
+                if (Integer.parseInt(getmessage[1])== 0){
+                    result = "Login False";
+                }
                 return result;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -417,7 +421,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             }
 
         }
-        //----------------------------------------------------Shoppinglist--------------------------------------------------------
+        //----------------------------------------------------Add-Shoppinglist--------------------------------------------------------
         else if (type.equals("shoppinglist")) {
             String namelist = params[1];
             String status = params[2];
@@ -596,15 +600,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         if (result.equals("สมัครสมาชิกสำเร็จ")) { //---Register
-            Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
             ((Activity) ctx).finish();
             return;
         } else if (result.equals("ชื่อผู้ใช้นี้มีผู้อื่นใช้แล้ว ลองใช้ชื่ออื่น")) { //---Register false
-            Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
         } else if (result.equals("กลุ่มผู้ใช้นี้มีผู้อื่นใช้แล้ว ลองใช้ชื่ออื่น")) { //---CreateGroup false
-            Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
         } else if (result.equals("สร้างกลุ่มสำเร็จ")) { //---CreateGroup
-            Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
             ((Activity) ctx).finish();
         } else if (result.equals("เข้าร่วมกลุ่มสำเร็จ")) { //---JoinGroup
             alertDialog.setMessage(result);
@@ -642,7 +646,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("สำเร็จ")) {//---shoppinglist
-            Toast.makeText(ctx, "เพิ่มรายการชอปปิงลิสต์สำเร็จ", Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "เพิ่มรายการชอปปิงลิสต์สำเร็จ", Toast.LENGTH_SHORT).show();
         } else if (result.equals("ไม่สำเร็จ")) {//---shoppinglist
             alertDialog.setMessage(result);
             alertDialog.show();
@@ -666,7 +670,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             alertDialog.setTitle("AddMenu Status");
             alertDialog.show();
 
-        } else if (result.equals("login 0")) { //---Login False
+        } else if (result.equals("Login False")) { //---Login False
             alertDialog.setMessage(result);
             alertDialog.show();
 
@@ -679,7 +683,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             String id = getid[1];
             String name = getid[2];
 
-            alertDialog.setMessage(getid[0] + getid[1]);
+            alertDialog.setMessage("Login Success");
             alertDialog.show();
 
             Intent intent = new Intent(ctx, home_all.class);

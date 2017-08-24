@@ -6,14 +6,14 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/van"
         android:orderInCategory="100"
         android:title="@string/search"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_find"
-        android:icon="@drawable/findgroup"
+        android:icon="@drawable/selectgroup"
         android:orderInCategory="200"
         android:title="@string/action_find"
         app:showAsAction="always" />

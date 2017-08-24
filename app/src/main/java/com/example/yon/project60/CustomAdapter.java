@@ -2,6 +2,8 @@ package com.example.yon.project60;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,11 +66,24 @@ public class CustomAdapter extends BaseAdapter {
 
         // getting movie data for the row
         Fresh m = freshItems.get(position);
+        //---------check วันหมดอายุ------------------//
+        String checkexp = m.getexp();
 
+        if(Integer.parseInt(checkexp) < 0){
+            holder.Exp.setTextColor(Color.RED);
+            String[] showexp = checkexp.split("-");
+            holder.Exp.setText("หมดอายุแล้ว"+"\n"+showexp[1]+" วัน");
+        }else if (Integer.parseInt(checkexp) <= 3){
+            holder.Exp.setTextColor(Color.parseColor("#FFC400"));
+            holder.Exp.setText(checkexp + " วัน");
+        }else{
+            holder.Exp.setTextColor(Color.parseColor("#64DD17"));
+            holder.Exp.setText(checkexp + " วัน");
+        }
         // holder.Order.setText(m.getfresh_list_id());
         holder.Name.setText(m.getfresh_name());
         holder.Amount.setText(m.getamount() + m.getunit()+"\n"+m.getcal()+"แคลต่อ100กรัม");
-        holder.Exp.setText(m.getexp());
+       // holder.Exp.setText(m.getexp());
         holder.Picture.setImageBitmap(m.getpicture());
 
         return convertView;

@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -126,10 +127,28 @@ public class shoppinglist_menu extends AppCompatActivity
                         if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
                             group_id = "0";
                             backgroundTask.execute(type, namelist, status, user_id, group_id);
-                            showShoppingListMyself();
+                            //---Delay Time Before ShowItem
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    showShoppingListMyself();
+                                }
+                            }, 300);
+
                         } else {
                             backgroundTask.execute(type, namelist, status, user_id, group_id);
-                            showShoppingListGroup();
+                            //---Delay Time Before ShowItem
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    showShoppingListGroup();
+                                }
+                            }, 300);
+
                         }
                         dialog.dismiss();
                       // recreate();

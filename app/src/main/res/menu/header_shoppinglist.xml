@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/action_find"
-        android:icon="@drawable/findgroup"
+        android:icon="@drawable/selectgroup"
         android:orderInCategory="200"
         android:title="@string/action_find"
         app:showAsAction="always" />

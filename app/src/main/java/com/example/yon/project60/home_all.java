@@ -45,6 +45,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -572,7 +573,7 @@ public class home_all extends AppCompatActivity
                         LocalDate datemenu2 = LocalDate.parse(datemenu);
                         LocalDate dateNow = LocalDate.now();
                         int days = Days.daysBetween(dateNow, datemenu2).getDays();
-                        String daysexe = (days + " วัน");
+                        String daysexe = String.valueOf(days);
 
                         getfresh_list_id.add(jo.getString("fresh_list_id"));
                         getfresh_name.add(jo.getString("fresh_name"));
@@ -656,7 +657,7 @@ public class home_all extends AppCompatActivity
                         LocalDate datemenu2 = LocalDate.parse(datemenu);
                         LocalDate dateNow = LocalDate.now();
                         int days = Days.daysBetween(dateNow, datemenu2).getDays();
-                        String daysexe = (days + " วัน");
+                        String daysexe = String.valueOf(days);
                         // System.out.println(days);
                         //  System.out.println(dateNow);
                         getfresh_list_id.add(jo.getString("fresh_list_id"));
@@ -798,7 +799,7 @@ public class home_all extends AppCompatActivity
                         LocalDate datemenu2 = LocalDate.parse(datemenu);
                         LocalDate dateNow = LocalDate.now();
                         int days = Days.daysBetween(dateNow, datemenu2).getDays();
-                        String daysexe = (days + " วัน");
+                        String daysexe = String.valueOf(days);
 
                         Fresh fresh = new Fresh();
                         fresh.setfresh_list_id(jo.getString("fresh_list_id"));
@@ -894,7 +895,7 @@ public class home_all extends AppCompatActivity
                                                 // Do something after 5s = 5000ms
                                                 showItemMyself();
                                             }
-                                        }, 250);
+                                        }, 300);
 
                                     } else {
                                         backgroundTask.execute(type, user_id, group_id, ValFreshlistID);

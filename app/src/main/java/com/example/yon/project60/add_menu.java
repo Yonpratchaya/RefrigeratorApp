@@ -11,6 +11,7 @@ import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -157,6 +158,7 @@ public class add_menu extends AppCompatActivity
         defaultsetdate();
      /*   setDateTimeField(); */
         //Radiobutton
+        defaultradiobutton();
         selectdb = (TextView) (findViewById(R.id.output));
         selectdb.setEnabled(false);
         avgexp = (TextView) (findViewById(R.id.avgoutput));
@@ -301,7 +303,7 @@ public class add_menu extends AppCompatActivity
         type.setAdapter(adapterSpinner2);
     }
 
-    public void AddMenu(View view) {
+    public void AddMenu(View view) {//------------------------------------------Addmenu-------------
         if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
             join_leave_id = "0";
             group_id = "0";
@@ -413,9 +415,35 @@ public class add_menu extends AppCompatActivity
         DateEtxt.setInputType(InputType.TYPE_NULL);
     }
 
-    public void rbClick(View view) {
+    public void defaultradiobutton(){
+        RadioButton radioButton1 = (RadioButton) findViewById(R.id.radioButton1);
+        radioButton1.setChecked(true);
+        DateEtxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == DateEtxt) {
+                    DatePickerDialog.show();
+                }
+
+            }
+        });
+        Calendar newCalendar = Calendar.getInstance();
+        DatePickerDialog = new DatePickerDialog(this, new OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                DateEtxt.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+        expcheck = "1";
+    }
+
+    public void rbClick(View view) {//---------------------------------------------------------------Radio Buttonclick-----------
         // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
+        Boolean checked = ((RadioButton) view).isChecked();
         // Check which radio button was clicked
         switch (view.getId()) {
             case R.id.radioButton1:
@@ -605,13 +633,30 @@ public class add_menu extends AppCompatActivity
             BackgroundTask backgroundTask2 = new BackgroundTask(this);
             backgroundTask2.execute(type2, user_id, group_id, shop_id);
             setResult(RESULT_OK, null);
-            finish();
+            //---Delay Time Before ShowItem
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    finish();
+                }
+            }, 300);
+
         } else {
             shop_id = "0";
             backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id, shop_id);
             Intent intent = new Intent(add_menu.this, home_all.class);
             startActivity(intent);
-            finish();
+            //---Delay Time Before ShowItem
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Do something after 5s = 5000ms
+                    finish();
+                }
+            }, 300);
         }
 
     }
