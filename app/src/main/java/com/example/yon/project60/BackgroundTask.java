@@ -135,7 +135,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
                 httpURLConnection.disconnect();
                 String[] getmessage = result.split(" ");
                 if (Integer.parseInt(getmessage[1])== 0){
-                    result = "Login False";
+                    result = "Login Fail";
                 }
                 return result;
             } catch (MalformedURLException e) {
@@ -670,7 +670,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             alertDialog.setTitle("AddMenu Status");
             alertDialog.show();
 
-        } else if (result.equals("Login False")) { //---Login False
+        } else if (result.equals("Login Fail")) { //---Login False
             alertDialog.setMessage(result);
             alertDialog.show();
 
