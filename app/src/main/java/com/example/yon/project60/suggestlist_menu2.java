@@ -63,7 +63,7 @@ public class suggestlist_menu2 extends AppCompatActivity
     private ListView listView;
     private CustomAdapter4 adapter;
 
-    private static final String host_ip = "10.105.6.110";
+    private static final String host_ip = "10.105.13.146";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
     private static final String suggest_list = "http://" + host_ip + "/webapp/suggest_list.php";

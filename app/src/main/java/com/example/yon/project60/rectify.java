@@ -99,7 +99,7 @@ public class rectify extends AppCompatActivity
     String ba1;
     String mCurrentPhotoPath;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    private static final String host_ip = "10.105.6.110";
+    private static final String host_ip = "10.105.13.146";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
 
     // Autocomplete

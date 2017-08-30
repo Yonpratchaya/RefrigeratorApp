@@ -58,7 +58,7 @@ import java.util.List;
 public class shoppinglist_menu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     SharedPreferences sharedpreferences;
-    private static final String host_ip = "10.105.6.110";
+    private static final String host_ip = "10.105.13.146";
     private static final String get_shoppinglist_url = "http://" + host_ip + "/webapp/get_shopping_list.php";
     private static final String get_group_url = "http://" + host_ip + "/webapp/get_group.php";
     private String Values_url = get_shoppinglist_url;

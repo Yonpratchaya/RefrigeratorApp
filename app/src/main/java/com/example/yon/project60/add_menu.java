@@ -118,7 +118,7 @@ public class add_menu extends AppCompatActivity
     String ba1;
     String mCurrentPhotoPath;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    private static final String host_ip = "10.105.6.110";
+    private static final String host_ip = "10.105.13.146";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
 
     // Autocomplete
@@ -639,12 +639,15 @@ public class add_menu extends AppCompatActivity
 
         String type = "addMenu";
         BackgroundTask backgroundTask = new BackgroundTask(this);
+
         if (shop_id != null) {
             backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id, shop_id);
+
             String type2 = "DelShoppingList";
             BackgroundTask backgroundTask2 = new BackgroundTask(this);
             backgroundTask2.execute(type2, user_id, group_id, shop_id);
             setResult(RESULT_OK, null);
+
             //---Delay Time Before ShowItem
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -658,14 +661,15 @@ public class add_menu extends AppCompatActivity
         } else {
             shop_id = "0";
             backgroundTask.execute(type, Fresh_Name, Amount, S_Unit, S_Type_name, Exp, ba1, user_id, Calorie, join_leave_id, group_id, shop_id);
-            Intent intent = new Intent(add_menu.this, home_all.class);
-            startActivity(intent);
+
             //---Delay Time Before ShowItem
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     // Do something after 5s = 5000ms
+                    Intent intent = new Intent(add_menu.this, home_all.class);
+                    startActivity(intent);
                     finish();
                 }
             }, 300);

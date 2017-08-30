@@ -72,7 +72,7 @@ public class home_all extends AppCompatActivity
     private ImageButton buttonmeat;
     private ImageButton buttonvegetable;
     private ImageButton buttonother;
-    private static final String host_ip = "10.105.6.110";
+    private static final String host_ip = "10.105.13.146";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_meat_url = "http://" + host_ip + "/webapp/get_meat.php";
     private static final String get_vegetable_url = "http://" + host_ip + "/webapp/get_vegetablesandfruits.php";
@@ -91,7 +91,7 @@ public class home_all extends AppCompatActivity
     private String[] group_names, group_ids, join_leave_ids;
     private int mSelectedIndex;
     private String[] dialogitems = {"เพิ่มเข้าชอปปิงลิสต์", "แก้ไขรายการ", "ลบรายการ"};
-    private String[] listindex, fresh_name_index, amount_index, unit_index, typename_index, exp_index;
+    private String[] listindex, fresh_name_index, amount_index, unit_index, typename_index, exp_index; //Listindex คือ Fresh_List_Id
     private List<String> getfresh_list_id, getfresh_name, getamount, getunit, gettype_name, getexp;
 
     DrawerLayout drawerLayout;
@@ -886,7 +886,7 @@ public class home_all extends AppCompatActivity
                                     BackgroundTask backgroundTask = new BackgroundTask(home_all.this);
                                     if (group_name == null || group_name.equals("ตู้เย็นของฉัน")) {
                                         group_id = "0";
-                                        backgroundTask.execute(type, user_id, group_id, ValFreshlistID);
+                                        backgroundTask.execute(type, user_id, group_id, ValFreshlistID); //
                                         //---Delay Time Before ShowItem
                                         final Handler handler = new Handler();
                                         handler.postDelayed(new Runnable() {
@@ -898,8 +898,17 @@ public class home_all extends AppCompatActivity
                                         }, 300);
 
                                     } else {
-                                        backgroundTask.execute(type, user_id, group_id, ValFreshlistID);
-                                        showItemGroup();
+                                        backgroundTask.execute(type, user_id, group_id, ValFreshlistID); //
+                                        //---Delay Time Before ShowItem
+                                        final Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                // Do something after 5s = 5000ms
+                                                showItemGroup();
+                                            }
+                                        }, 300);
+
                                     }
                                 }
                             });
