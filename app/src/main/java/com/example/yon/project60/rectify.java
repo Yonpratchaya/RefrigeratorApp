@@ -99,7 +99,7 @@ public class rectify extends AppCompatActivity
     String ba1;
     String mCurrentPhotoPath;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    private static final String host_ip = "10.105.13.146";
+    private static final String host_ip = "35.186.157.180";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
 
     // Autocomplete
@@ -151,6 +151,7 @@ public class rectify extends AppCompatActivity
         defaultsetdate();
      /*   setDateTimeField(); */
         //Radiobutton
+        defaultradiobutton();
         selectdb = (TextView) (findViewById(R.id.output));
         selectdb.setEnabled(false);
         avgexp = (TextView) (findViewById(R.id.avgoutput));
@@ -423,6 +424,32 @@ public class rectify extends AppCompatActivity
         DateEtxt.setText(defaultdate);
         DateEtxt.setInputType(InputType.TYPE_NULL);
         DateEtxt.requestFocus();
+    }
+
+    public void defaultradiobutton() {
+        RadioButton radioButton1 = (RadioButton) findViewById(R.id.radioButton1);
+        radioButton1.setChecked(true);
+        DateEtxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == DateEtxt) {
+                    DatePickerDialog.show();
+                }
+
+            }
+        });
+        Calendar newCalendar = Calendar.getInstance();
+        DatePickerDialog = new DatePickerDialog(this, new android.app.DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                DateEtxt.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+        expcheck = "1";
     }
 
     public void rbClick(View view) {
