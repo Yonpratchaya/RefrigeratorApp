@@ -56,14 +56,16 @@
                         android:layout_marginRight="80dp"
                         android:layout_weight="1"
                         android:hint="Groupname"
-                        android:maxLength="20" />
+                        android:inputType="textAutoComplete"
+                        android:maxLength="20"
+                        android:maxLines="1" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/Password"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
                     <ImageView
                         android:layout_width="65dp"
@@ -73,6 +75,7 @@
                         android:layout_below="@+id/button"
                         android:layout_marginLeft="40dp"
                         android:src="@drawable/password" />
+
                     <EditText
                         android:id="@+id/pass_reg"
                         android:layout_width="match_parent"

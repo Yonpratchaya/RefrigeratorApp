@@ -56,7 +56,10 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="80dp"
                         android:layout_weight="1"
-                        android:hint="Groupname" />
+                        android:hint="Groupname"
+                        android:inputType="textAutoComplete"
+                        android:maxLength="20"
+                        android:maxLines="1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -82,7 +85,8 @@
                         android:layout_marginRight="80dp"
                         android:layout_weight="1"
                         android:hint="Password"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:maxLength="20" />
                 </LinearLayout>
 
 
