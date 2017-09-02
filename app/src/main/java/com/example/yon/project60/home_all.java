@@ -126,6 +126,7 @@ public class home_all extends AppCompatActivity
         sharedpreferencesOfGroup();
         i = 0;
 
+
        /* TextView txtuser_name = (TextView) findViewById(R.id.usernametext2);//-----setuser_id in intent Home_all
         txtuser_name.setText(user_name);
         TextView txtgroup_name = (TextView) findViewById(R.id.groupnametext2);
@@ -379,6 +380,10 @@ public class home_all extends AppCompatActivity
                 return true;
             case R.id.exit:
                 Intent intent7 = new Intent(home_all.this, MainActivity.class);
+                sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.clear();
+                editor.commit();
                 startActivity(intent7);
                 finish();
                 return true;
@@ -605,7 +610,7 @@ public class home_all extends AppCompatActivity
                     unit_index = getunit.toArray(new String[getunit.size()]);
                     typename_index = gettype_name.toArray(new String[gettype_name.size()]);
                     exp_index = getexp.toArray(new String[getexp.size()]);
-                    Log.i("showitem", "value is" + Arrays.toString(listindex));
+                    //Log.i("showitem", "value is" + Arrays.toString(listindex));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

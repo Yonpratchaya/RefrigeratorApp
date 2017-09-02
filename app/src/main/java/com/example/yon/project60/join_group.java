@@ -102,6 +102,10 @@ public class join_group extends AppCompatActivity
                 return true;
             case R.id.exit:
                 Intent intent7 = new Intent(join_group.this, MainActivity.class);
+                sharedPreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
                 startActivity(intent7);
                 finish();
                 return true;

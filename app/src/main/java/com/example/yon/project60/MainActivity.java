@@ -8,12 +8,14 @@ import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.os.AsyncTask;
 
 public class MainActivity extends AppCompatActivity {
+    private String user_id, user_name;
     EditText UsernameEt, PasswordEt;
     SharedPreferences sharedpreferences;
 
@@ -28,11 +30,26 @@ public class MainActivity extends AppCompatActivity {
         UsernameEt = (EditText) findViewById(R.id.etUsername);
         PasswordEt = (EditText) findViewById(R.id.etPassword);
 
-        sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.clear();
-        editor.commit();
 
+    }
+
+    @Override
+    protected void onResume() {
+        sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+        user_id = sharedpreferences.getString("user_id", null);
+        user_name = sharedpreferences.getString("user_name", null);
+        if (user_id != null) {
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.clear();
+            editor.commit();
+            Intent intent = new Intent(this, home_all.class);
+            editor.putString("user_id", user_id);
+            editor.putString("user_name", user_name);
+            editor.commit();
+            startActivity(intent);
+            finish();
+        }
+        super.onResume();
     }
 
     public void OnLogin(View view) {

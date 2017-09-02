@@ -81,6 +81,7 @@ public class suggestlist_menu2 extends AppCompatActivity
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +181,10 @@ public class suggestlist_menu2 extends AppCompatActivity
                 return true;
             case R.id.exit:
                 Intent intent7 = new Intent(suggestlist_menu2.this, MainActivity.class);
+                sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.clear();
+                editor.commit();
                 startActivity(intent7);
                 finish();
                 return true;
@@ -215,6 +220,7 @@ public class suggestlist_menu2 extends AppCompatActivity
     private void showSuggestlist_Myself() {
         freshList.clear();
         adapter.notifyDataSetChanged();
+        getfresh_name = new ArrayList<String>();
         //---------------------List View--------*****--*-*-*-*-*-*-*-*-
         RequestQueue queue = Volley.newRequestQueue(this);
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, suggest_list + "?fresh_name=" + fresh_nametrue, null, new Response.Listener<JSONObject>() {
@@ -230,6 +236,7 @@ public class suggestlist_menu2 extends AppCompatActivity
 
                        /* byte[] ba2 = Base64.decode(jo.getString("picture"), Base64.DEFAULT);
                         Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);*/
+                        getfresh_name.add(jo.getString("title1"));
 
                         Fresh fresh = new Fresh();
                         fresh.setpic_menu(jo.getString("picture"));
@@ -239,6 +246,11 @@ public class suggestlist_menu2 extends AppCompatActivity
                         freshList.add(fresh);
                     }
                     listView.setAdapter(adapter);
+                    if (getfresh_name.size() == 0){
+                        alertDialog = new AlertDialog.Builder(suggestlist_menu2.this).create();
+                        alertDialog.setMessage("ไม่พบเมนูอาหารจากวัตถุดิบที่เลือก");
+                        alertDialog.show();
+                    }
                     //Log.i("showitem", "value is");
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -124,13 +124,13 @@ public class CustomAdapter2 extends BaseAdapter {
             public void onClick(View v) {
                 String valueShop_id = freshItems.get(position).getshop_id();
                 String valueShop_name = freshItems.get(position).getshop_name();
-                String valueStatus = freshItems.get(position).getstatus();
-                if (valueStatus.equals("1")) {//Show CheckBox Tick
+            //    String valueStatus = freshItems.get(position).getstatus();
+            //    if (valueStatus.equals("1")) {//Show CheckBox Tick
                     Intent intent = new Intent(activity, add_menu.class);
                     intent.putExtra("shop_id", valueShop_id);
                     intent.putExtra("shop_name", valueShop_name);
                     activity.startActivityForResult(intent,1);
-                }
+            //    }
             }
         });
 

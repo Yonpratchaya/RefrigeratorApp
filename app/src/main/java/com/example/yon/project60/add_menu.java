@@ -408,6 +408,10 @@ public class add_menu extends AppCompatActivity
                 return true;
             case R.id.exit:
                 Intent intent7 = new Intent(add_menu.this, MainActivity.class);
+                sharedpreferences = getSharedPreferences("Tooyen", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.clear();
+                editor.commit();
                 startActivity(intent7);
                 finish();
                 return true;
