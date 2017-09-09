@@ -596,9 +596,9 @@ public class home_all extends AppCompatActivity
                         fresh.setpicture(bitmap);
                         if (days <= 30) {
                             fresh.setexp(daysexe);
-                        } else
+                        } else {
                             fresh.setexp(jo.getString("exp"));
-
+                        }
                         // adding movie to movies array
                         freshList.add(fresh);
 

@@ -117,9 +117,11 @@ public class add_menu extends AppCompatActivity
     private ImageView imageView;
     String ba1;
     String mCurrentPhotoPath;
+    Bitmap image_freshbase;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
     private static final String host_ip = "35.186.157.180";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
+    private static final String get_basePicture = "http://" + host_ip + "/webapp/get_basePicture.php";
 
     // Autocomplete
     private AutoCompleteTextView Autocomplete;
@@ -127,7 +129,8 @@ public class add_menu extends AppCompatActivity
     private List<String> list;
     private List<String> listb;
     private List<String> listc;
-    String freshname;
+    private List<String> picture_freshbase;
+    String freshname,pictureall;
     AlertDialog alertDialog;
     String shop_id, shop_name; //Comefrom Theadd of Shoppinglist
 
@@ -221,24 +224,7 @@ public class add_menu extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 takePhoto();
-             /*   Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    // Create the File where the photo should go
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException ex) {
-                        // Error occurred while creating the File
-                        ex.printStackTrace();
-                    }
-                    // Continue only if the File was successfully created
-                    if (photoFile != null) {
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(photoFile));
-                        startActivityForResult(takePictureIntent, CAMERA_REQUEST);
-                    }
-                }*/
+
             }
         });
 
@@ -248,6 +234,7 @@ public class add_menu extends AppCompatActivity
         list = new ArrayList<String>();
         listb = new ArrayList<String>();
         listc = new ArrayList<String>();
+
 
         Autocomplete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -265,9 +252,11 @@ public class add_menu extends AppCompatActivity
                                 String a = jo.getString("fresh_name");
                                 String b = jo.getString("cal_gram");
                                 String c = jo.getString("exp");
+                                //String d = jo.getString("picture");
                                 list.add(a);
                                 listb.add(b);
                                 listc.add(c);
+                                //picture_freshbase.add(d);
                             }
                             ///------------------------------Autoconplete-----------------------------
                             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(add_menu.this, android.R.layout.simple_dropdown_item_1line, list);
@@ -275,6 +264,10 @@ public class add_menu extends AppCompatActivity
                             autocomplete.setAdapter(dataAdapter);
 
                             aaa = Autocomplete.getText().toString();
+
+                           /* byte[] ba2 = Base64.decode(picture_freshbase.get(0), Base64.DEFAULT);
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);
+                            imageView.setImageBitmap(bitmap);*/
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -296,6 +289,43 @@ public class add_menu extends AppCompatActivity
                 queue.add(jsonObjectRequest);
             }
         });
+
+        //---------------------Load Picture from Fresh_base-------------------------------------------------------------//
+        picture_freshbase = new ArrayList<String>();
+        RequestQueue queue = Volley.newRequestQueue(add_menu.this);
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, get_basePicture, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Toast.makeText(home_all.this,response.toString(),Toast.LENGTH_LONG).show();
+                try {
+                    JSONArray productArray = response.getJSONArray("result");
+                    for (int i = 0; i < productArray.length(); i++) {
+                        JSONObject jo = productArray.getJSONObject(i);
+                        String d = jo.getString("picture");
+                        picture_freshbase.add(d);
+                    }
+                    /*byte[] ba2 = Base64.decode(picture_freshbase.get(0), Base64.DEFAULT);
+                    image_freshbase = BitmapFactory.decodeByteArray(ba2, 0, ba2.length);
+                    imageView.setImageBitmap(bitmap);*/
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                if (networkResponse != null && networkResponse.data != null) {
+                    String jsonError = new String(networkResponse.data);
+                    // Print Error!
+                }
+                Toast.makeText(add_menu.this, error.toString(), Toast.LENGTH_LONG).show();
+            }
+
+        });
+        queue.add(jsonObjectRequest);
 
 
     }
@@ -497,6 +527,7 @@ public class add_menu extends AppCompatActivity
                     //avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
                     getExpDateFromDatabase();
                     expcheck = "0";
+
                 }
                 break;
 
@@ -515,6 +546,7 @@ public class add_menu extends AppCompatActivity
                 avgdays = Integer.parseInt(listc.get(i));
                 Calorie = listb.get(i);
                 freshname = list.get(i);
+                pictureall = picture_freshbase.get(i);
                 break;
             } else {
                 freshname = null;
@@ -547,6 +579,12 @@ public class add_menu extends AppCompatActivity
         if (b2.isChecked()) {
             selectdb.setText("ค่าเฉลี่ยวันหมดอายุจากฐานข้อมูล");
             avgexp.setText("หมดอายุในอีก " + avgdays + " วัน");
+
+            LocalDate dateNow = LocalDate.now();
+            LocalDate datethen = dateNow.plusDays(avgdays);
+            String defaultdate = datethen.toString("yyyy-MM-dd");
+            DateEtxt.setText(defaultdate);
+            DateEtxt.setInputType(InputType.TYPE_NULL);
         }
 
     }
@@ -598,6 +636,20 @@ public class add_menu extends AppCompatActivity
     }
 
     public void addedmenu() {
+        final String aaa = Autocomplete.getText().toString();
+        //------------------------------- ค้นหาชื่อใน get baseAdd เพื่อเอาวันหมดอายุของสดมาแสดง -------------------------------
+        for (int i = 0; i < list.size(); i++) {
+            if (aaa.equals(list.get(i))) {
+                avgdays = Integer.parseInt(listc.get(i));
+                Calorie = listb.get(i);
+                freshname = list.get(i);
+                pictureall = picture_freshbase.get(i);
+                break;
+            } else {
+                freshname = null;
+            }
+        }
+
         //----------------CameraUpload-------------------------------
         if (mCurrentPhotoPath != null) {
             // Get the dimensions of the bitmap
@@ -626,6 +678,8 @@ public class add_menu extends AppCompatActivity
             bm.compress(Bitmap.CompressFormat.JPEG, 100, bao);
             byte[] ba = bao.toByteArray();
             ba1 = Base64.encodeToString(ba, Base64.DEFAULT);
+        } else if (pictureall != null){
+            ba1 = pictureall;
         } else
             ba1 = "";
 
@@ -681,7 +735,7 @@ public class add_menu extends AppCompatActivity
 
     }
 
-    public void takePhoto(){
+    public void takePhoto() {
         List<String> permissionsNeeded = new ArrayList<String>();
 
         final List<String> permissionsList = new ArrayList<String>();
@@ -708,7 +762,7 @@ public class add_menu extends AppCompatActivity
                         });
                 return;
             }*/
-            ActivityCompat.requestPermissions(add_menu.this,permissionsList.toArray(new String[permissionsList.size()]),
+            ActivityCompat.requestPermissions(add_menu.this, permissionsList.toArray(new String[permissionsList.size()]),
                     REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
             return;
         }
@@ -717,10 +771,10 @@ public class add_menu extends AppCompatActivity
     }
 
     private boolean addPermission(List<String> permissionsList, String permission) {
-        if (ContextCompat.checkSelfPermission(this,permission) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             permissionsList.add(permission);
             // Check for Rationale Option
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,permission))
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission))
                 return false;
         }
         return true;
@@ -760,8 +814,7 @@ public class add_menu extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
-            {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<String, Integer>();
                 // Initial
                 perms.put(android.Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);

@@ -611,6 +611,7 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
             ((Activity) ctx).finish();
         } else if (result.equals("เข้าร่วมกลุ่มสำเร็จ")) { //---JoinGroup
+            alertDialog.setTitle("JoinGroup Status");
             alertDialog.setMessage(result);
             alertDialog.show();
 
@@ -618,12 +619,15 @@ public class BackgroundTask extends AsyncTask<String, Void, String> {
             ctx.startActivity(intent);
             ((Activity) ctx).finish();
         } else if (result.equals("ชื่อกลุ่มหรือรหัสผ่านผิดกรุณาลองใหม่อีกครั้ง")) {//---JoinGroup
+            alertDialog.setTitle("JoinGroup Status");
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("คุณเข้าร่วมกลุ่มนี้อยู่แล้ว")) {//---JoinGroup
+            alertDialog.setTitle("JoinGroup Status");
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("ไม่สามารถเข้าร่วมกลุ่มได้")) {//---JoinGroup
+            alertDialog.setTitle("JoinGroup Status");
             alertDialog.setMessage(result);
             alertDialog.show();
         } else if (result.equals("ออกจากกลุ่มสำเร็จ")) {//---LeaveGroup
