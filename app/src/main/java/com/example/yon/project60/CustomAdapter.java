@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Yon on 30/6/2560.
@@ -91,7 +92,7 @@ public class CustomAdapter extends BaseAdapter {
         }else{
             //แปลง yyyy-MM-dd เป็น dd MMM yyyy
             DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-            DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+            DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy",new Locale("th", "TH"));
             Date date = null;
             try {
                 date = inputFormat.parse(checkexp);
