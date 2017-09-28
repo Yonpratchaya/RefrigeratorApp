@@ -119,7 +119,7 @@ public class add_menu extends AppCompatActivity
     String mCurrentPhotoPath;
     Bitmap image_freshbase;
     ///**************-----*-*-*-*-*-*-* Autocomplete ดึงฐานข้อมูลจาก freshbase-*-*-*-*-*-*-*-*-*-*-*-*-*-
-    private static final String host_ip = "35.186.157.180";
+    private static final String host_ip = "35.198.241.100";
     private static final String get_baseAdd = "http://" + host_ip + "/webapp/get_baseAdd.php";
     private static final String get_basePicture = "http://" + host_ip + "/webapp/get_basePicture.php";
 

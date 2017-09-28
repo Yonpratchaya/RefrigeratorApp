@@ -1,5 +1,11 @@
 package com.example.yon.project60;
 
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,16 +17,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
@@ -62,6 +71,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.R.attr.action;
+import static android.R.attr.supportsAssist;
 
 
 public class home_all extends AppCompatActivity
@@ -72,7 +82,7 @@ public class home_all extends AppCompatActivity
     private ImageButton buttonmeat;
     private ImageButton buttonvegetable;
     private ImageButton buttonother;
-    private static final String host_ip = "35.186.157.180";
+    private static final String host_ip = "35.198.241.100";
     private static final String get_product_url = "http://" + host_ip + "/webapp/get_product.php";
     private static final String get_meat_url = "http://" + host_ip + "/webapp/get_meat.php";
     private static final String get_vegetable_url = "http://" + host_ip + "/webapp/get_vegetablesandfruits.php";
@@ -105,7 +115,9 @@ public class home_all extends AppCompatActivity
     ArrayAdapter<String> dataAdapter;
     MaterialSearchView searchView;
     private String GetTextSearch, searchuser_id, searchgroup_id;
-    int countvalue;
+    int countvalue, days;
+    private static Long MILLISECS_PER_DAY = 86400000L;
+    private static Long MILLISECS_PER_MIN = 60000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,12 +221,11 @@ public class home_all extends AppCompatActivity
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
-                if(newText.equals("")) {
+                if (newText.equals("")) {
                     searchView.setAdapter(null);
-                }
-                else{
+                } else {
                     searchView.setAdapter(dataAdapter);
-                    }
+                }
                 return false;
             }
         });
@@ -611,6 +622,7 @@ public class home_all extends AppCompatActivity
                     typename_index = gettype_name.toArray(new String[gettype_name.size()]);
                     exp_index = getexp.toArray(new String[getexp.size()]);
                     //Log.i("showitem", "value is" + Arrays.toString(listindex));
+                    getexpforNotification();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -695,6 +707,7 @@ public class home_all extends AppCompatActivity
                     typename_index = gettype_name.toArray(new String[gettype_name.size()]);
                     exp_index = getexp.toArray(new String[getexp.size()]);
                     // Log.i("showitem", "value is" + Arrays.toString(listindex));
+                    getexpforNotification();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -728,11 +741,9 @@ public class home_all extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else if (searchView.isSearchOpen()) {
+        } else if (searchView.isSearchOpen()) {
             searchView.closeSearch();
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -947,6 +958,61 @@ public class home_all extends AppCompatActivity
                 return false;
             }
         });
+    }
+
+    private void getexpforNotification(){
+        //-----------------------------Notification---------------------------------------------------//
+        for (int i = 0; i < freshList.size(); i++) {
+            Fresh m = freshList.get(i);
+            String checkexp = m.getexp();
+            if (checkexp.length() < 3) {
+                if (Integer.parseInt(checkexp) <= 1) { //เช็ควันหมดอายุ
+                    //showNotification();
+                    //break;
+                } else {
+                    //ใส่ code ให้เก็บวันหมดอายุ ไว้รอการแจ้งเตือน ในส่วนการทำงานเบื้องหลัง
+                    days = Integer.parseInt(checkexp);
+                    days = days - 1;
+                    scheduleNotification(showNotification(), days);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void scheduleNotification(Notification notification, int days) {
+
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long delay = MILLISECS_PER_DAY * days;
+        long futureInMillis = SystemClock.elapsedRealtime() + (3600000*5);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    public Notification showNotification() {
+        Intent intent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(intent);
+        PendingIntent pendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder =
+                new Notification.Builder(this); // this is context
+                        builder.setSmallIcon(R.mipmap.ic_launcher2);
+                        builder.setContentTitle("Household Fridge: จัดการของในตู้เย็น");
+                        builder.setContentText("มีรายการวัตถุดิบใกล้หมดอายุ ใน" + mSelected + "เข้ามาดูกันเถอะ :)");
+                        builder.setAutoCancel(true);
+                        builder.setPriority(Notification.PRIORITY_MAX);
+                        builder.setDefaults(Notification.DEFAULT_VIBRATE);
+                        builder.setDefaults(Notification.DEFAULT_SOUND);
+                        builder.setContentIntent(pendingIntent);
+                        return builder.build();
+
     }
 
 }
