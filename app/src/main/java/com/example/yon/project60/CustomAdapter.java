@@ -74,7 +74,7 @@ public class CustomAdapter extends BaseAdapter {
         //---------check วันหมดอายุ------------------//
         String checkexp = m.getexp();
 
-        if (checkexp.length() < 3){
+        if (checkexp.length() <= 4){
             if(Integer.parseInt(checkexp) < 0){ //หมดอายุแล้ว
                 holder.Exp.setTextColor(Color.RED);
                 String[] showexp = checkexp.split("-");
